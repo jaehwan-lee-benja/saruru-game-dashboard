@@ -1,0 +1,215 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>사르르 게임 · 관리 대시보드</title>
+<meta name="robots" content="noindex">
+<style>
+  :root{
+    --bg:#f4f6f1; --surface:#fff; --surface-2:#fbfcf9; --ink:#1a201b; --ink-2:#4c5850; --ink-3:#7a867c;
+    --line:#dde2d7; --line-2:#e9ede4; --brand:#2f6b49; --brand-soft:#e2efe6; --gold:#b98a2e; --clay:#b8433c;
+    --lake:#2d6a8e; --plum:#7a4d78; --shadow:0 1px 2px rgba(26,32,27,.05),0 4px 16px rgba(26,32,27,.05);
+    --sans:-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Pretendard","Malgun Gothic","Segoe UI",sans-serif;
+    --mono:"SF Mono",ui-monospace,Menlo,monospace;
+  }
+  @media (prefers-color-scheme:dark){:root{
+    --bg:#12160f;--surface:#1a1f18;--surface-2:#161b14;--ink:#e7ece1;--ink-2:#a6b0a2;--ink-3:#757f72;
+    --line:#2b332a;--line-2:#232a22;--brand:#6bb98a;--brand-soft:#1e3126;--gold:#d9ad5b;--clay:#e0736b;
+    --lake:#6aa7cb;--plum:#b389b0;--shadow:0 1px 2px rgba(0,0,0,.3),0 4px 18px rgba(0,0,0,.3);
+  }}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);line-height:1.5;-webkit-font-smoothing:antialiased;font-variant-numeric:tabular-nums}
+  .hide{display:none!important}
+  .loginwrap{min-height:100vh;display:grid;place-items:center;padding:24px}
+  .loginbox{background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:38px 34px;box-shadow:var(--shadow);text-align:center;max-width:360px;width:100%}
+  .loginbox .mark{width:56px;height:56px;border-radius:15px;margin:0 auto 16px;background:linear-gradient(145deg,var(--brand),var(--lake));display:grid;place-items:center;font-size:30px}
+  .loginbox h1{font-size:22px;margin:0 0 6px;font-weight:800}
+  .loginbox p{font-size:13px;color:var(--ink-2);margin:0 0 22px;line-height:1.6}
+  #gbtn{width:100%;padding:12px;border-radius:11px;border:1px solid var(--line);background:var(--brand);color:#fff;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit}
+  #gbtn:hover{filter:brightness(1.06)}#gbtn:disabled{opacity:.6;cursor:default}
+  #lmsg{font-size:12px;color:var(--clay);margin-top:12px;min-height:16px}
+  .wrap{max-width:1120px;margin:0 auto;padding:30px 20px 70px}
+  header{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:14px;margin-bottom:6px}
+  .brand{display:flex;align-items:center;gap:12px}
+  .mark{width:42px;height:42px;border-radius:12px;flex:none;background:linear-gradient(145deg,var(--brand),var(--lake));display:grid;place-items:center;font-size:22px;box-shadow:var(--shadow)}
+  .eyebrow{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--brand);font-weight:700}
+  h1.tt{font-size:clamp(20px,3vw,26px);margin:2px 0 0;letter-spacing:-.02em;font-weight:800}
+  .meta{text-align:right;font-size:12px;color:var(--ink-3);line-height:1.7}
+  .who{font-size:11px;color:var(--ink-3)}.who a{color:var(--lake);cursor:pointer;text-decoration:none}
+  hr.rule{height:1px;background:var(--line);margin:20px 0 24px;border:0}
+  h2{font-size:13px;letter-spacing:.04em;text-transform:uppercase;color:var(--ink-2);margin:38px 0 14px;font-weight:700;display:flex;align-items:center;gap:9px}
+  h2 .dot{width:7px;height:7px;border-radius:50%;background:var(--brand)}
+  h2 .tag{margin-left:auto;font-size:10px;letter-spacing:.06em;padding:2px 8px;border-radius:20px;background:color-mix(in srgb,var(--gold) 18%,transparent);color:var(--gold);font-weight:700}
+  h2 .tag.live{background:var(--brand-soft);color:var(--brand)}
+  .kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(172px,1fr));gap:13px}
+  .tile{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:15px 16px;box-shadow:var(--shadow);position:relative;overflow:hidden}
+  .tile::before{content:"";position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--brand)}
+  .tile.crit::before{background:var(--clay)}.tile.gold::before{background:var(--gold)}.tile.lake::before{background:var(--lake)}.tile.plum::before{background:var(--plum)}
+  .tile .label{font-size:11.5px;color:var(--ink-2);font-weight:600}
+  .tile .num{font-size:29px;font-weight:800;letter-spacing:-.03em;margin-top:6px;line-height:1}
+  .tile .num small{font-size:15px;font-weight:700;color:var(--ink-2)}
+  .tile .sub{font-size:11.5px;color:var(--ink-3);margin-top:6px}
+  .card{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:20px;box-shadow:var(--shadow)}
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+  @media (max-width:780px){.grid2{grid-template-columns:1fr}}
+  .card h3{margin:0 0 3px;font-size:15px;font-weight:700}.card .cap{font-size:11.5px;color:var(--ink-3);margin:0 0 16px}
+  .mock{opacity:.96}
+  .notice{background:var(--brand-soft);border:1px solid color-mix(in srgb,var(--brand) 30%,var(--line));border-radius:12px;padding:14px 16px;font-size:12.5px;color:var(--ink-2);line-height:1.6}
+  .notice b{color:var(--ink)}
+  .plan{display:grid;gap:9px}
+  .plan-row{display:grid;grid-template-columns:20px 1fr auto;gap:10px;align-items:center;font-size:12.5px;padding:9px 11px;background:var(--surface-2);border:1px solid var(--line);border-radius:10px}
+  .plan-row .st{font-size:10px;font-weight:700;padding:2px 8px;border-radius:20px}
+  .st.mock{background:color-mix(in srgb,var(--gold) 18%,transparent);color:var(--gold)}
+  .st.gate{background:color-mix(in srgb,var(--clay) 15%,transparent);color:var(--clay)}
+  .st.done{background:var(--brand-soft);color:var(--brand)}
+  /* 픽셀소 갤러리 */
+  .gallery{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:14px}
+  .cowcard{background:var(--surface);border:1px solid var(--line);border-radius:13px;padding:12px;box-shadow:var(--shadow);text-align:center;display:flex;flex-direction:column;align-items:center;gap:2px}
+  .cowcard .cv{background:repeating-conic-gradient(#0000 0 90deg,color-mix(in srgb,var(--ink) 4%,transparent) 0 180deg) 0 0/16px 16px;border:1px solid var(--line-2);border-radius:9px;image-rendering:pixelated;width:120px;height:120px;object-fit:contain}
+  .cowcard .cn{font-size:12.5px;font-weight:700;margin-top:8px;color:var(--ink)}
+  .cowcard .cnote{font-size:10.5px;color:var(--ink-3);line-height:1.4;min-height:28px}
+  .cowcard a.src{font-size:10.5px;color:var(--lake);text-decoration:none;font-weight:600;margin-top:2px}
+  .cowcard a.src:hover{text-decoration:underline}
+  footer{margin-top:42px;padding-top:16px;border-top:1px solid var(--line);font-size:11px;color:var(--ink-3);display:flex;flex-wrap:wrap;justify-content:space-between;gap:8px}
+  footer code{font-family:var(--mono)}
+  .loading{color:var(--ink-3);font-size:13px;padding:40px 0;text-align:center}
+  #denied{text-align:center;padding:50px 20px}
+  #denied h2{display:block;color:var(--clay);justify-content:center}
+</style>
+</head>
+<body>
+<!-- 로그인 게이트 -->
+<div id="login" class="loginwrap">
+  <div class="loginbox">
+    <div class="mark">🎮</div>
+    <h1>사르르 게임</h1>
+    <p>관리자 전용 대시보드입니다.<br>등록된 계정으로만 열람할 수 있습니다.</p>
+    <button id="gbtn">Google로 로그인</button>
+    <div id="lmsg"></div>
+  </div>
+</div>
+
+<!-- 대시보드 -->
+<div id="appwrap" class="wrap hide">
+  <header>
+    <div class="brand"><div class="mark">🎮</div>
+      <div><div class="eyebrow">사르르목장 게임 · 관리 대시보드</div><h1 class="tt">게임 운영 현황</h1></div>
+    </div>
+    <div class="meta">
+      <div class="who"><span id="who"></span> · <a id="logout">로그아웃</a></div>
+    </div>
+  </header>
+  <hr class="rule">
+  <div id="app"><div class="loading">불러오는 중…</div></div>
+  <footer>
+    <span>사르르목장 게임 · 관리 전용 · 로그인 필수</span>
+    <span>게임: <code>github.io/saruru-game</code></span>
+  </footer>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+const SB_URL='https://rstazttwlghsorpzsugy.supabase.co';
+const SB_ANON='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJzdGF6dHR3bGdoc29ycHpzdWd5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODMxMjI4NjAsImV4cCI6MjA5ODY5ODg2MH0.B5zrWLpG5vOFISWQeM8pD3UPBTYPHcmqYkD7rFBN6JM';
+const ALLOW='designerbenja@gmail.com';   // 관리자 게이트(M2 실데이터 연동 전까지 클라 체크; 이후 game 스키마 RLS로 승격)
+const sb=supabase.createClient(SB_URL,SB_ANON);
+const $=id=>document.getElementById(id);
+
+$('gbtn').onclick=()=>{ $('gbtn').disabled=true; $('lmsg').textContent='Google로 이동 중…';
+  sb.auth.signInWithOAuth({provider:'google',options:{redirectTo:location.origin+location.pathname}})
+    .then(({error})=>{ if(error){ $('gbtn').disabled=false; $('lmsg').textContent='오류: '+error.message; }}); };
+$('logout').onclick=()=>sb.auth.signOut();
+
+function gate(session){
+  if(session){ $('login').classList.add('hide'); $('appwrap').classList.remove('hide'); $('who').textContent=session.user.email;
+    if((session.user.email||'').toLowerCase()===ALLOW){ renderApp(); }
+    else { $('app').innerHTML='<div id="denied"><h2>열람 권한이 없습니다</h2><p style="color:var(--ink-2);font-size:13px">이 계정은 대시보드 접근이 허용되지 않았습니다. 등록된 관리자 계정으로 로그인하세요.</p></div>'; }
+  } else { $('appwrap').classList.add('hide'); $('login').classList.remove('hide'); $('gbtn').disabled=false; $('lmsg').textContent=''; }
+}
+(async()=>{ const {data:{session}}=await sb.auth.getSession(); gate(session);
+  sb.auth.onAuthStateChange((_e,s)=>gate(s)); })();
+
+// ===== 픽셀소 갤러리 데이터 (오리지널 아트 · 레퍼런스 스타일 오마주) =====
+const P={'.':null,K:'#20232b',D:'#2b3a63',W:'#ffffff',w:'#e9edf5',b:'#c2c8d4',s:'#7f8894',n:'#3a281a',B:'#7c5230',T:'#a06a38',t:'#caa06a',p:'#f7a8c4',P:'#e8698f',r:'#b7382b',R:'#e0503c',h:'#f4b8ac',g:'#5f9a4c',G:'#8fc07a',u:'#7d5fd0',U:'#a98cf5',c:'#d9c9ff',y:'#f4d35e',o:'#e07b39',k:'#4a4f59',E:'#2a3559',L:'#ffffff',z:'#111318',m:'#8b5a2b'};
+function blank(w,h){return Array.from({length:h},()=>Array(w).fill('.'));}
+function put(g,r,c,str){for(let i=0;i<str.length;i++){const cc=c+i;if(g[r]&&cc>=0&&cc<g[r].length&&str[i]!=='~')g[r][cc]=str[i];}}
+function disc(g,cx,cy,rx,ry,ch){for(let r=0;r<g.length;r++)for(let c=0;c<g[0].length;c++){const dx=(c-cx)/rx,dy=(r-cy)/ry;if(dx*dx+dy*dy<=1)g[r][c]=ch;}}
+function rect(g,x,y,w,h,ch){for(let r=y;r<y+h;r++)for(let c=x;c<x+w;c++)if(g[r]&&c<g[0].length)g[r][c]=ch;}
+function outline(g,fill,line){const H=g.length,W=g[0].length,src=g.map(r=>r.slice());for(let r=0;r<H;r++)for(let c=0;c<W;c++){if(src[r][c]==='.'){let adj=false;for(const d of [[1,0],[-1,0],[0,1],[0,-1],[1,1],[1,-1],[-1,1],[-1,-1]])if(src[r+d[0]]&&src[r+d[0]][c+d[1]]===fill)adj=true;if(adj)g[r][c]=line;}}}
+
+const COWS=[];
+function mc(name,note,url,g){COWS.push({name,note,url,sp:g.map(r=>r.join(''))});}
+(()=>{const g=blank(16,13);rect(g,3,3,10,7,'T');rect(g,3,3,4,4,'W');rect(g,9,6,4,3,'W');rect(g,11,4,2,3,'W');rect(g,3,2,2,1,'k');rect(g,11,2,2,1,'k');put(g,5,4,'K');put(g,10,4,'K');rect(g,6,9,2,1,'p');rect(g,4,10,2,2,'k');rect(g,10,10,2,2,'k');outline(g,'T','K');outline(g,'W','K');mc('Minecraft 소','복셀 큐브·갈색+흰패치·짧은 뿔','https://minecraft.wiki/w/Cow',g);})();
+(()=>{const g=blank(16,14);rect(g,3,4,10,7,'R');put(g,4,5,'W');put(g,7,6,'W');put(g,10,5,'W');put(g,6,8,'W');put(g,9,8,'W');put(g,4,4,'K');put(g,11,4,'K');rect(g,6,10,2,1,'p');rect(g,4,11,2,2,'k');rect(g,10,11,2,2,'k');outline(g,'R','K');[4,7,10].forEach(x=>{put(g,1,x,'r');put(g,0,x,'r');});put(g,2,3,'w');put(g,2,4,'w');put(g,2,5,'w');put(g,2,6,'w');put(g,2,7,'w');put(g,2,8,'w');put(g,2,9,'w');put(g,2,10,'w');put(g,2,11,'w');mc('Mooshroom(버섯소)','빨강 히드+흰반점+등의 버섯','https://minecraft.wiki/w/Mooshroom',g);})();
+(()=>{const g=blank(18,14);disc(g,9,8,7,4.5,'W');disc(g,15,7,3.2,3.2,'W');outline(g,'W','D');put(g,6,4,'z');put(g,7,4,'z');put(g,6,5,'z');put(g,7,5,'z');put(g,8,5,'z');put(g,10,9,'z');put(g,11,9,'z');put(g,11,10,'z');put(g,15,7,'z');put(g,16,7,'z');put(g,15,8,'L');put(g,17,8,'p');put(g,17,9,'p');rect(g,6,12,2,2,'D');rect(g,12,12,2,2,'D');mc('Stardew Valley 소','아담·둥근 코지·흰+검정 얼룩','https://stardewvalleywiki.com/Cow',g);})();
+(()=>{const g=blank(16,16);disc(g,8,9,5.5,5,'W');outline(g,'W','D');put(g,3,7,'k');put(g,2,7,'k');put(g,3,10,'k');put(g,2,10,'k');put(g,4,7,'T');put(g,5,7,'T');put(g,4,8,'T');put(g,10,10,'T');put(g,11,10,'T');put(g,11,11,'T');put(g,7,7,'z');put(g,7,8,'z');put(g,9,7,'z');put(g,9,8,'z');put(g,7,7,'L');put(g,9,7,'L');rect(g,7,10,3,2,'p');put(g,7,11,'P');put(g,9,11,'P');rect(g,5,14,2,2,'D');rect(g,9,14,2,2,'D');mc('Story of Seasons 소','치비·큰머리·흰+갈패치·정면','https://harvestmoon.fandom.com/wiki/Cow',g);})();
+(()=>{const g=blank(18,16);disc(g,9,9,7.5,5.5,'W');outline(g,'W','K');put(g,4,4,'z');put(g,5,4,'z');put(g,4,5,'z');put(g,5,5,'z');put(g,6,5,'z');put(g,12,10,'z');put(g,13,10,'z');put(g,13,11,'z');put(g,6,6,'z');put(g,7,6,'z');put(g,6,7,'z');put(g,7,7,'z');put(g,10,6,'z');put(g,11,6,'z');put(g,10,7,'z');put(g,11,7,'z');put(g,6,6,'L');put(g,10,6,'L');put(g,3,4,'k');put(g,2,4,'k');put(g,14,4,'k');put(g,15,4,'k');rect(g,8,10,2,2,'p');put(g,8,13,'y');put(g,9,13,'y');put(g,8,14,'o');rect(g,5,14,2,2,'k');rect(g,11,14,2,2,'k');mc('Rune Factory 버파무','플러시 흑백 몬스터·큰 눈·목방울','https://therunefactory.fandom.com/wiki/Buffamoo',g);})();
+(()=>{const g=blank(14,14);rect(g,3,4,8,7,'W');outline(g,'W','K');put(g,2,4,'k');put(g,11,4,'k');put(g,4,4,'T');put(g,5,4,'T');put(g,4,5,'T');put(g,8,6,'T');put(g,9,6,'T');put(g,4,6,'z');put(g,9,6,'z');rect(g,5,8,4,2,'p');put(g,5,9,'K');put(g,8,9,'K');rect(g,4,11,2,2,'k');rect(g,8,11,2,2,'k');mc('EarthBound 소','SNES 스쿼트 정면 NPC·흰+갈패치','https://wikibound.info/wiki/Cow',g);})();
+(()=>{const g=blank(16,17);disc(g,8,8,5,5.5,'c');outline(g,'c','u');put(g,2,6,'u');put(g,1,6,'U');put(g,2,9,'u');put(g,1,9,'U');put(g,6,7,'U');put(g,7,7,'U');put(g,6,8,'U');put(g,10,9,'U');put(g,11,9,'U');put(g,6,7,'z');put(g,10,7,'z');put(g,6,7,'L');put(g,10,7,'L');rect(g,7,9,3,2,'p');rect(g,4,14,3,3,'u');rect(g,9,14,3,3,'u');mc('Ooblets 스타일(오마주)','파스텔 블롭·둥근 콩·큰 발 (아트스타일 오마주)','https://ooblets.fandom.com/wiki/Ooblets',g);})();
+(()=>{const g=blank(15,21);rect(g,5,3,5,5,'T');put(g,4,2,'k');put(g,3,2,'k');put(g,10,2,'k');put(g,11,2,'k');put(g,6,5,'R');put(g,8,5,'R');rect(g,6,6,3,1,'W');rect(g,4,8,7,6,'B');rect(g,5,9,2,2,'W');rect(g,8,10,2,2,'W');rect(g,4,14,3,5,'B');rect(g,8,14,3,5,'B');rect(g,4,19,3,1,'k');rect(g,8,19,3,1,'k');rect(g,12,2,1,15,'k');rect(g,11,2,3,2,'b');outline(g,'B','z');outline(g,'T','z');mc('Diablo II 헬 보바인','이족보행 소악마·폴암·위협적','https://diablo.fandom.com/wiki/Hell_Bovine',g);})();
+(()=>{const g=blank(18,14);disc(g,9,8,7,4,'W');disc(g,15,7,3,3,'W');outline(g,'W','K');put(g,5,5,'z');put(g,6,5,'z');put(g,5,6,'z');put(g,6,6,'z');put(g,7,6,'z');put(g,10,9,'z');put(g,11,9,'z');put(g,15,7,'z');put(g,16,7,'z');put(g,15,6,'L');put(g,17,8,'p');put(g,2,9,'z');put(g,1,9,'z');put(g,1,10,'z');rect(g,6,12,2,2,'K');rect(g,12,12,2,2,'K');mc('itch.io 팜 애니멀 스타일','클린 모던 도트·흰+검정·측면 (growmaster 팩 스타일)','https://growmasterart.itch.io/pixel-farm-animals-pack-passive-npcs-32x32-animated-chicken-pig-cow-chick',g);})();
+(()=>{const g=blank(16,14);rect(g,3,4,9,6,'W');rect(g,11,3,3,4,'W');outline(g,'W','n');put(g,4,5,'B');put(g,5,5,'B');put(g,4,6,'B');put(g,6,6,'B');put(g,8,7,'B');put(g,9,7,'B');put(g,12,4,'z');put(g,13,5,'p');put(g,13,6,'p');put(g,2,5,'B');put(g,1,5,'B');rect(g,4,10,2,2,'n');rect(g,9,10,2,2,'n');mc('Harvest Moon SNES 소','SNES 팜 소·흰+패치·측면 도트','https://www.spriters-resource.com/snes/harvestmoon/asset/31564/',g);})();
+
+function drawCow(canvas,sp){
+  const W=Math.max(...sp.map(r=>r.length)),H=sp.length,sc=6;
+  canvas.width=W*sc;canvas.height=H*sc;
+  const x=canvas.getContext('2d');x.imageSmoothingEnabled=false;
+  for(let r=0;r<H;r++)for(let c=0;c<sp[r].length;c++){const col=P[sp[r][c]];if(col){x.fillStyle=col;x.fillRect(c*sc,r*sc,sc,sc);}}
+}
+
+function renderApp(){
+  $('app').innerHTML=`
+  <h2><span class="dot"></span>게임 현황 · 통계 <span class="tag">목업 · M2 카카오 연동 예정</span></h2>
+  <div class="kpis mock">
+    <div class="tile lake"><div class="label">누적 플레이</div><div class="num">—<small> 회</small></div><div class="sub">카카오 로그인 후 집계</div></div>
+    <div class="tile gold"><div class="label">등록 플레이어</div><div class="num">—<small> 명</small></div><div class="sub">닉네임 기준</div></div>
+    <div class="tile"><div class="label">최고 점수</div><div class="num">—</div><div class="sub">전체 랭킹 1위</div></div>
+    <div class="tile plum"><div class="label">오늘 플레이</div><div class="num">—<small> 회</small></div><div class="sub">DAU / 세션</div></div>
+    <div class="tile crit"><div class="label">치트 의심 제출</div><div class="num">—</div><div class="sub">Edge Function 검증</div></div>
+  </div>
+  <div class="card" style="margin-top:14px"><div class="notice">📊 <b>실데이터 연동 대기</b> — M2(카카오 로그인 + game 스키마 랭킹)가 배포되면 이 영역이 라이브 통계로 채워집니다. game 스키마 신설은 공유 DB라 <b>guardian 검수 + 유저 승인</b> 게이트 후 진행됩니다.</div></div>
+
+  <h2><span class="dot"></span>멤버십 · 사르르목장 연결 <span class="tag">구조 · 틀</span></h2>
+  <div class="card">
+    <p class="cap">게임 플레이어 ↔ 사르르목장 CRM 고객/멤버십 연결 <b>구조</b>만 먼저. 실제 고객(PII) 연동은 크로스도메인 + PII라 <b>crm 조율 + 유저 승인</b> 게이트.</p>
+    <div class="plan">
+      <div class="plan-row"><span>①</span><span>게임 닉네임 ↔ 멤버십 매칭(옵트인) — 고객이 스스로 연결</span><span class="st gate">승인 게이트</span></div>
+      <div class="plan-row"><span>②</span><span>멤버십 등급별 게임 리워드/뱃지 (구조 정의)</span><span class="st mock">설계</span></div>
+      <div class="plan-row"><span>③</span><span>게임 참여 → 멤버십 포인트 적립 파이프라인</span><span class="st mock">설계</span></div>
+      <div class="plan-row"><span>④</span><span>game 스키마 ↔ crm 스키마 <b>직접 FK 금지</b> (격리 유지)</span><span class="st done">원칙 확정</span></div>
+    </div>
+  </div>
+
+  <h2><span class="dot"></span>고객 게임 상호작용 <span class="tag">틀</span></h2>
+  <div class="grid2" style="align-items:start">
+    <div class="card"><h3>게임별 참여</h3><p class="cap">여러 미니게임의 플레이·이벤트 참여 현황(예정)</p>
+      <div class="plan"><div class="plan-row"><span>🐄</span><span>똥피하기 — 라이브</span><span class="st done">배포됨</span></div>
+      <div class="plan-row"><span>🧅</span><span>양파게임 — 후보</span><span class="st mock">예정</span></div></div></div>
+    <div class="card"><h3>이벤트 · 캠페인</h3><p class="cap">기간 랭킹전·경품 이벤트 영역(예정)</p>
+      <div class="plan"><div class="plan-row"><span>🏆</span><span>주간 랭킹전</span><span class="st mock">M2 후</span></div>
+      <div class="plan-row"><span>🎁</span><span>경품 이벤트(본인확인 필요 시 승격)</span><span class="st gate">승인 게이트</span></div></div></div>
+  </div>
+
+  <h2><span class="dot"></span>공통 공지 <span class="tag">배너</span></h2>
+  <div class="card"><div class="notice">📢 <b>공지</b> — 이 영역에 고객 대상 공지·업데이트 소식을 노출합니다. (편집 연동 예정) · 현재 라이브 게임: <b>젖소 똥피하기</b> — <a href="https://jaehwan-lee-benja.github.io/saruru-game/" target="_blank" rel="noopener" style="color:var(--lake)">플레이 ↗</a></div></div>
+
+  <h2><span class="dot"></span>똥피하기 · 픽셀소 레퍼런스 10선 <span class="tag live">참고 갤러리</span></h2>
+  <div class="card">
+    <p class="cap">유명 게임 속 픽셀 소 <b>10선</b> — 우리 젖소 캐릭터 디자인 참고용. 각 이미지는 <b>저작권 이슈 회피를 위해 원본 스프라이트가 아닌 해당 스타일을 오마주한 오리지널 도트</b>이며, 실제 원본은 각 출처 링크에서 확인하세요.</p>
+    <div class="gallery" id="gallery"></div>
+  </div>`;
+  const gal=$('gallery');
+  COWS.forEach(cow=>{
+    const card=document.createElement('div');card.className='cowcard';
+    const cv=document.createElement('canvas');cv.className='cv';drawCow(cv,cow.sp);
+    card.appendChild(cv);
+    const nm=document.createElement('div');nm.className='cn';nm.textContent=cow.name;card.appendChild(nm);
+    const nt=document.createElement('div');nt.className='cnote';nt.textContent=cow.note;card.appendChild(nt);
+    const a=document.createElement('a');a.className='src';a.href=cow.url;a.target='_blank';a.rel='noopener';a.textContent='원본 보기 ↗';card.appendChild(a);
+    gal.appendChild(card);
+  });
+}
+</script>
+</body>
+</html>
