@@ -322,31 +322,34 @@ function buildLogos(){
   const paste=(g,src,ox,oy)=>{for(let r=0;r<src.length;r++)for(let c=0;c<src[0].length;c++){const v=src[r][c];if(v!=='.'&&g[r+oy]&&ox+c>=0&&ox+c<g[0].length)g[r+oy][ox+c]=v;}};
   const DIG={'0':['XXX','X.X','X.X','X.X','XXX'],'1':['.X.','XX.','.X.','.X.','XXX'],'2':['XXX','..X','XXX','X..','XXX'],'3':['XXX','..X','XXX','..X','XXX'],'4':['X.X','X.X','XXX','..X','..X'],'5':['XXX','X..','XXX','..X','XXX'],'6':['XXX','X..','XXX','X.X','XXX'],'7':['XXX','..X','.X.','.X.','.X.'],'8':['XXX','X.X','XXX','X.X','XXX'],'9':['XXX','X.X','XXX','..X','XXX']};
   const pixText=(g,x,y,str,ink)=>{let cx=x;for(const ch of str){const d=DIG[ch];if(d){for(let r=0;r<5;r++)for(let c=0;c<3;c++)if(d[r][c]==='X'&&g[y+r])g[y+r][cx+c]=ink;}cx+=4;}};
-  const leaf=(g,x0,y0,dx,dy,len,ch)=>{for(let t=0;t<len;t++){const x=Math.round(x0+dx*t/len),y=Math.round(y0+dy*t/len);const w=Math.round((0.5-Math.abs(t/len-0.42))*3.4)+1;for(let k=-w;k<=w;k++){const xx=x+k;if(g[y]&&xx>=0&&xx<g[0].length)g[y][xx]=ch;}}};
-  function heroCow(){const g=blank(40,46);const T=2; // 원본 충실 + 살짝 3/4 고개 돌림
-    put(g,0,18,'cccc');put(g,1,17,'cccccc');rect(g,16,2,8,7,'c');rect(g,17,4,6,2,'R');outline(g,['c'],'d'); // 띄운 우유팩 모자
-    leaf(g,12,20,-9,-7,13,'W');leaf(g,29,21,9,-4,11,'W'); // 잎사귀 귀(좌 큼·우 눕힘)
-    disc(g,20,28,13,12.5,'W');outline(g,['W'],'d');
-    disc(g,26+T,20,3.6,3,'N');disc(g,12,31,2.4,1.8,'N'); // 이마+볼 반점
-    disc(g,15+T,26,1.7,2.4,'K');disc(g,25+T,26,1.6,2.2,'K');put(g,25+T,15+T,'H');put(g,25+T,25+T,'H'); // 작은 콩 눈
-    disc(g,20+T,36,8,4.5,'c');outline(g,['c'],'d'); // 주둥이
-    put(g,34,17+T,'P');put(g,34,23+T,'P'); // 콧구멍
-    put(g,37,15+T,'d');put(g,38,16+T,'d');put(g,38,17+T,'d');put(g,38,18+T,'d');put(g,38,19+T,'d');put(g,38,20+T,'d');put(g,38,21+T,'d');put(g,38,22+T,'d');put(g,37,23+T,'d'); // 미소
-    disc(g,10,33,1.9,1.4,'p');disc(g,31,33,1.9,1.4,'p'); // 볼터치
+  const ear=(g,cx,cy,dir,big,ch,sc)=>{const s=(big?1:0.86)*(sc||1);disc(g,cx,cy,3.1*s,3.5*s,ch);disc(g,cx+dir*2.4*(sc||1),cy-2.6*(sc||1),2.4*s,3*s,ch);disc(g,cx+dir*3.4*(sc||1),cy-4.6*(sc||1),1.4*s,1.8*s,ch);};
+  function heroCow(){const g=blank(38,40);const T=2; // 둥근 머리·짧은 원본형 귀·살짝 3/4
+    put(g,0,17,'cccc');put(g,1,16,'cccccc');rect(g,15,2,8,6,'c');rect(g,16,4,6,2,'R');outline(g,['c'],'d'); // 띄운 우유팩 모자
+    ear(g,8,18,-1,true,'W');ear(g,30,19,1,false,'W'); // 짧은 잎사귀 귀
+    disc(g,19,25,13,11.5,'W');outline(g,['W'],'d');
+    disc(g,22+T,17,3,2.5,'N');disc(g,11,28,2.3,1.8,'N'); // 이마+볼 반점
+    disc(g,14+T,24,1.7,2.3,'K');disc(g,24+T,24,1.6,2.1,'K');put(g,23+T,14+T,'H');put(g,23+T,24+T,'H'); // 작은 콩 눈
+    disc(g,19+T,32,7.5,4.2,'c');outline(g,['c'],'d'); // 주둥이
+    put(g,31,16+T,'P');put(g,31,22+T,'P'); // 콧구멍
+    put(g,34,14+T,'d');put(g,35,15+T,'d');put(g,35,16+T,'d');put(g,35,17+T,'d');put(g,35,18+T,'d');put(g,35,19+T,'d');put(g,35,20+T,'d');put(g,35,21+T,'d');put(g,34,22+T,'d'); // 미소
+    disc(g,9,30,1.9,1.4,'p');disc(g,30,30,1.9,1.4,'p'); // 볼터치
     despeckle(g);return g;}
-  function smallCow(hat){const g=blank(22,26);
-    if(hat==='cone'){put(g,0,9,'WW');put(g,1,8,'WWWW');put(g,2,8,'WWWW');put(g,3,8,'tttt');put(g,4,9,'tt');put(g,5,10,'t');outline(g,['t'],'u');}
-    else if(hat==='milk'){put(g,0,9,'cccc');rect(g,8,1,6,5,'c');put(g,3,9,'RR');outline(g,['c'],'d');}
-    else{disc(g,11,3,3.5,3,'W');put(g,0,10,'W');outline(g,['W'],'d');}
-    disc(g,3,15,2.4,3,'W');disc(g,19,15,2.4,3,'W');put(g,15,3,'p');put(g,15,19,'p');
-    disc(g,11,16,8,7.5,'W');disc(g,11,21,4.5,3,'c');outline(g,['W','c'],'d');disc(g,15,12,2,1.6,'N');
-    disc(g,7.5,17,1.6,2.1,'K');disc(g,14.5,17,1.6,2.1,'K');put(g,15,6,'H');put(g,15,13,'H');
-    put(g,19,4,'p');put(g,20,4,'p');put(g,19,17,'p');put(g,20,17,'p');
-    put(g,22,9,'P');put(g,22,12,'P');put(g,23,10,'P');put(g,23,11,'P');despeckle(g);return g;}
-  function trio(){const g=blank(60,28);paste(g,smallCow('scoop'),1,2);paste(g,smallCow('milk'),20,2);paste(g,smallCow('cone'),39,2);return g;}
-  function badge(){const D2=46,cx=23,cy=22,g=blank(D2,D2);const dist=(x,y)=>Math.hypot(x-cx,y-cy);
-    for(let y=0;y<D2;y++)for(let x=0;x<D2;x++){const dd=dist(x,y);if(dd<=15.5)g[y][x]='c';if(dd>=17&&dd<=18.6)g[y][x]='d';if(dd>=15&&dd<=15.8)g[y][x]='L';}
-    paste(g,smallCow('milk'),12,7);rect(g,9,34,28,7,'d');put(g,8,36,'d');put(g,37,36,'d');rect(g,10,35,26,1,'L');pixText(g,16,37,'2021','c');despeckle(g);return g;}
+  function smallCow(hat){const g=blank(24,30);const T=1;
+    if(hat==='milk'){rect(g,9,0,6,5,'c');rect(g,10,2,4,1,'R');outline(g,['c'],'d');}
+    else if(hat==='cone'){put(g,4,10,'tttt');put(g,5,11,'ttt');put(g,6,12,'t');outline(g,['t'],'u');disc(g,12,3,3,2.6,'W');outline(g,['W'],'d');}
+    else{disc(g,12,3,3.3,2.8,'W');disc(g,11,1,1.6,1.4,'W');outline(g,['W'],'d');}
+    ear(g,5,12,-1,true,'W',0.62);ear(g,19,13,1,false,'W',0.62);
+    disc(g,12,18,9,8,'W');outline(g,['W'],'d');
+    disc(g,15+T,12,1.8,1.5,'N');disc(g,7,21,1.4,1.1,'N');
+    disc(g,9+T,18,1.5,1.9,'K');disc(g,15+T,18,1.4,1.8,'K');put(g,16,9+T,'H');put(g,16,15+T,'H');
+    disc(g,12+T,25,4.6,2.8,'c');outline(g,['c'],'d');
+    put(g,24,10+T,'P');put(g,24,14+T,'P');
+    put(g,26,10+T,'d');put(g,27,11+T,'d');put(g,27,12+T,'d');put(g,27,13+T,'d');put(g,26,14+T,'d');
+    put(g,22,5,'pp');put(g,22,17,'pp');despeckle(g);return g;}
+  function trio(){const g=blank(72,32);paste(g,smallCow('scoop'),0,1);paste(g,smallCow('milk'),24,1);paste(g,smallCow('cone'),48,1);return g;}
+  function badge(){const D2=56,cx=28,cy=25,g=blank(D2,D2);const dist=(x,y)=>Math.hypot(x-cx,y-cy);
+    for(let y=0;y<D2;y++)for(let x=0;x<D2;x++){const dd=dist(x,y);if(dd<=19.5)g[y][x]='c';if(dd>=21&&dd<=22.8)g[y][x]='d';if(dd>=19&&dd<=19.8)g[y][x]='L';}
+    paste(g,smallCow('milk'),16,4);rect(g,12,42,32,7,'d');put(g,11,44,'d');put(g,44,44,'d');rect(g,13,43,30,1,'L');pixText(g,21,45,'2021','c');despeckle(g);return g;}
   return {P, list:[
     {key:'hero', name:'A. 히어로 소', note:'단일 히어로 마스코트 · 파비콘/앱아이콘·게임 마크', sp:S(heroCow())},
     {key:'trio', name:'B. 트리오', note:'원본 3마리 재해석(콘·우유팩·아이스크림 모자) · 브랜드 인지 최강', sp:S(trio())},
