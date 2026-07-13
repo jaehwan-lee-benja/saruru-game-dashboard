@@ -71,6 +71,16 @@
   .cowcard .cnote{font-size:10.5px;color:var(--ink-3);line-height:1.4;min-height:28px}
   .cowcard a.src{font-size:10.5px;color:var(--lake);text-decoration:none;font-weight:600;margin-top:2px}
   .cowcard a.src:hover{text-decoration:underline}
+  /* 로고 픽셀 */
+  .logogrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:14px}
+  .logocard{background:var(--surface);border:1px solid var(--line);border-radius:13px;padding:14px;box-shadow:var(--shadow);text-align:center;display:flex;flex-direction:column;align-items:center;gap:6px}
+  .logocard .limg{background:repeating-conic-gradient(#0000 0 90deg,color-mix(in srgb,var(--ink) 4%,transparent) 0 180deg) 0 0/16px 16px;border:1px solid var(--line-2);border-radius:9px;image-rendering:pixelated;width:100%;max-width:180px;height:auto;object-fit:contain}
+  .logocard .ln{font-size:12.5px;font-weight:700;color:var(--ink)}
+  .logocard .lu{font-size:10.5px;color:var(--ink-3);min-height:14px}
+  .logocard .dl{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;margin-top:2px}
+  .logocard .dl a{font-size:10.5px;color:var(--lake);text-decoration:none;font-weight:600;border:1px solid var(--line);border-radius:7px;padding:3px 9px}
+  .logocard .dl a:hover{background:var(--brand-soft)}
+  .subhead{font-size:11.5px;font-weight:700;color:var(--ink-2);margin:6px 0 10px}
   footer{margin-top:42px;padding-top:16px;border-top:1px solid var(--line);font-size:11px;color:var(--ink-3);display:flex;flex-wrap:wrap;justify-content:space-between;gap:8px}
   footer code{font-family:var(--mono)}
   .loading{color:var(--ink-3);font-size:13px;padding:40px 0;text-align:center}
@@ -194,6 +204,15 @@ function renderApp(){
   <h2><span class="dot"></span>공통 공지 <span class="tag">배너</span></h2>
   <div class="card"><div class="notice">📢 <b>공지</b> — 이 영역에 고객 대상 공지·업데이트 소식을 노출합니다. (편집 연동 예정) · 현재 라이브 게임: <b>젖소 똥피하기</b> — <a href="https://jaehwan-lee-benja.github.io/saruru-game/" target="_blank" rel="noopener" style="color:var(--lake)">플레이 ↗</a></div></div>
 
+  <h2><span class="dot"></span>로고 픽셀 — 변형 최소 픽셀화 <span class="tag live">게임 + 굿즈</span></h2>
+  <div class="card">
+    <p class="cap">사르르목장 <b>원본 로고를 형태 그대로 픽셀 그리드에 양자화</b>(리디자인 아님) · 네이비 <code style="font-family:var(--mono)">#385088</code> 2톤 · <b>투명 배경 PNG</b>. 각 <b>1x</b> = 픽셀 마스터(정확 픽셀), <b>고해상</b> = 크리스프 확대본(굿즈/인쇄).</p>
+    <div class="subhead">🐄 마스코트 (게임 아이콘 · 스프라이트 · 파비콘)</div>
+    <div class="logogrid" id="logo-masc"></div>
+    <div class="subhead" style="margin-top:18px">🏷️ 풀 로고 (웹 · 스티커 · 굿즈 · 인쇄)</div>
+    <div class="logogrid" id="logo-full"></div>
+  </div>
+
   <h2><span class="dot"></span>똥피하기 · 픽셀소 레퍼런스 10선 <span class="tag live">참고 갤러리</span></h2>
   <div class="card">
     <p class="cap">유명 게임 속 픽셀 소 <b>10선</b> — 우리 젖소 캐릭터 디자인 참고용. 각 이미지는 <b>저작권 이슈 회피를 위해 원본 스프라이트가 아닌 해당 스타일을 오마주한 오리지널 도트</b>이며, 실제 원본은 각 출처 링크에서 확인하세요.</p>
@@ -209,6 +228,29 @@ function renderApp(){
     const a=document.createElement('a');a.className='src';a.href=cow.url;a.target='_blank';a.rel='noopener';a.textContent='원본 보기 ↗';card.appendChild(a);
     gal.appendChild(card);
   });
+  // 로고 픽셀
+  const LOGOS_MASC=[
+    {g:32,use:'파비콘 · 미니 아이콘',big:'masc-32@16x.png',one:'masc-32.png'},
+    {g:48,use:'게임 아이콘',big:'masc-48@11x.png',one:'masc-48.png'},
+    {g:64,use:'스프라이트 · 인게임',big:'masc-64@8x.png',one:'masc-64.png'},
+  ];
+  const LOGOS_FULL=[
+    {g:96,use:'웹 · 스티커',big:'full-96@11x.png',one:'full-96.png'},
+    {g:128,use:'굿즈',big:'full-128@8x.png',one:'full-128.png'},
+    {g:160,use:'고해상 인쇄',big:'full-160@7x.png',one:'full-160.png'},
+  ];
+  function renderLogos(elId,arr){const el=$(elId);arr.forEach(v=>{
+    const c=document.createElement('div');c.className='logocard';
+    const img=document.createElement('img');img.className='limg';img.loading='lazy';img.src='assets/logo-pixel/'+v.big;img.alt='사르르목장 로고 픽셀 '+v.g+'px';c.appendChild(img);
+    const n=document.createElement('div');n.className='ln';n.textContent=v.g+'px 그리드';c.appendChild(n);
+    const u=document.createElement('div');u.className='lu';u.textContent=v.use;c.appendChild(u);
+    const dl=document.createElement('div');dl.className='dl';
+    const a1=document.createElement('a');a1.href='assets/logo-pixel/'+v.one;a1.setAttribute('download','');a1.textContent='1x ↓';dl.appendChild(a1);
+    const a2=document.createElement('a');a2.href='assets/logo-pixel/'+v.big;a2.setAttribute('download','');a2.textContent='고해상 ↓';dl.appendChild(a2);
+    c.appendChild(dl);el.appendChild(c);
+  });}
+  renderLogos('logo-masc',LOGOS_MASC);
+  renderLogos('logo-full',LOGOS_FULL);
 }
 </script>
 </body>
