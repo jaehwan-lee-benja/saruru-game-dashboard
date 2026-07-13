@@ -5,6 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>사르르 게임 · 관리 대시보드</title>
 <meta name="robots" content="noindex">
+<link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/quiple/galmuri/dist/galmuri.css">
 <style>
   :root{
     --bg:#f4f6f1; --surface:#fff; --surface-2:#fbfcf9; --ink:#1a201b; --ink-2:#4c5850; --ink-3:#7a867c;
@@ -81,6 +83,15 @@
   .logocard .dl a{font-size:10.5px;color:var(--lake);text-decoration:none;font-weight:600;border:1px solid var(--line);border-radius:7px;padding:3px 9px}
   .logocard .dl a:hover{background:var(--brand-soft)}
   .subhead{font-size:11.5px;font-weight:700;color:var(--ink-2);margin:6px 0 10px}
+  /* 로고 리디자인 시안 */
+  .rdgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:16px}
+  .rdcard{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:16px;box-shadow:var(--shadow);text-align:center;display:flex;flex-direction:column;align-items:center;gap:6px}
+  .rdcard .rdimg{background:repeating-conic-gradient(#0000 0 90deg,color-mix(in srgb,var(--ink) 4%,transparent) 0 180deg) 0 0/16px 16px;border:1px solid var(--line-2);border-radius:10px;image-rendering:pixelated;max-width:100%;height:auto}
+  .rdcard .rn{font-size:13px;font-weight:800;color:var(--ink);margin-top:6px}
+  .rdcard .rd{font-size:10.5px;color:var(--ink-3);line-height:1.45;min-height:28px}
+  .rdcard .dl{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;margin-top:2px}
+  .rdcard .dl a{font-size:10.5px;color:var(--lake);text-decoration:none;font-weight:600;border:1px solid var(--line);border-radius:7px;padding:3px 9px;cursor:pointer}
+  .rdcard .dl a:hover{background:var(--brand-soft)}
   /* 버전 이력 */
   .vergrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(215px,1fr));gap:13px}
   .vercard{background:var(--surface);border:1px solid var(--line);border-radius:13px;padding:15px 16px;box-shadow:var(--shadow);position:relative;overflow:hidden;display:flex;flex-direction:column;gap:5px}
@@ -222,6 +233,12 @@ function renderApp(){
   <h2><span class="dot"></span>공통 공지 <span class="tag">배너</span></h2>
   <div class="card"><div class="notice">📢 <b>공지</b> — 이 영역에 고객 대상 공지·업데이트 소식을 노출합니다. (편집 연동 예정) · 현재 라이브 게임: <b>젖소 똥피하기</b> — <a href="https://jaehwan-lee-benja.github.io/saruru-game/" target="_blank" rel="noopener" style="color:var(--lake)">플레이 ↗</a></div></div>
 
+  <h2><span class="dot"></span>로고 픽셀 리디자인 시안 <span class="tag live">재해석 · v1</span></h2>
+  <div class="card">
+    <p class="cap">기계적 축소가 아니라 <b>브랜드에 맞게 예쁜 픽셀아트로 재해석</b> — 젖소 · 네이비 <code style="font-family:var(--mono)">#385088</code> · 우유 모티프로 <b>사르르목장 정체성</b> 유지. 인기 픽셀 마스코트 로고 학습 반영(치비 비율·큰 눈+글린트·볼터치·3톤 네이비). <b>여러 시안 → 피드백 받아 다듬는 전제(v1)</b>. 각 카드 다운로드 가능.</p>
+    <div class="rdgrid" id="rdgrid"></div>
+  </div>
+
   <h2><span class="dot"></span>로고 픽셀 — 변형 최소 픽셀화 <span class="tag live">게임 + 굿즈</span></h2>
   <div class="card">
     <p class="cap">사르르목장 <b>원본 로고를 형태 그대로 픽셀 그리드에 양자화</b>(리디자인 아님) · 네이비 <code style="font-family:var(--mono)">#385088</code> 2톤 · <b>투명 배경 PNG</b>. 각 <b>1x</b> = 픽셀 마스터(정확 픽셀), <b>고해상</b> = 크리스프 확대본(굿즈/인쇄).</p>
@@ -289,6 +306,92 @@ function renderApp(){
     const vp=document.createElement('a');vp.className='vp';vp.href=GBASE+'versions/'+v.path+'/';vp.target='_blank';vp.rel='noopener';vp.textContent='▶ 플레이';c.appendChild(vp);
     vg.appendChild(c);
   });
+  renderRedesign();
+}
+
+// ===== 로고 리디자인 시안 (자기완결 픽셀 생성) =====
+function buildLogos(){
+  const P={'.':null,D:'#26365e',d:'#385088',L:'#5a72aa',N:'#385088',n:'#26365e',W:'#ffffff',s:'#dbe3f1',c:'#fff6e6',y:'#efe1c3',K:'#26365e',H:'#ffffff',p:'#f4a9b8',P:'#e07d94',m:'#ffe1e9',R:'#5a72aa',t:'#f3d9a6',u:'#d8b877'};
+  const blank=(w,h)=>Array.from({length:h},()=>Array(w).fill('.'));
+  const put=(g,r,c,str)=>{for(let i=0;i<str.length;i++){const cc=c+i;if(g[r]&&cc>=0&&cc<g[r].length&&str[i]!=='~')g[r][cc]=str[i];}};
+  const disc=(g,cx,cy,rx,ry,ch)=>{for(let r=0;r<g.length;r++)for(let c=0;c<g[0].length;c++){const dx=(c-cx)/rx,dy=(r-cy)/ry;if(dx*dx+dy*dy<=1)g[r][c]=ch;}};
+  const rect=(g,x,y,w,h,ch)=>{for(let r=y;r<y+h;r++)for(let c=x;c<x+w;c++)if(g[r]&&c<g[0].length&&c>=0)g[r][c]=ch;};
+  const outline=(g,fills,line)=>{const H=g.length,W=g[0].length,src=g.map(r=>r.slice()),F=new Set(fills);for(let r=0;r<H;r++)for(let c=0;c<W;c++){if(src[r][c]==='.'){let adj=false;for(const d of [[1,0],[-1,0],[0,1],[0,-1],[1,1],[1,-1],[-1,1],[-1,-1]])if(src[r+d[0]]&&F.has(src[r+d[0]][c+d[1]]))adj=true;if(adj)g[r][c]=line;}}};
+  const despeckle=g=>{const H=g.length,W=g[0].length,src=g.map(r=>r.slice());for(let r=0;r<H;r++)for(let c=0;c<W;c++){if(src[r][c]!=='.'){let n=0;for(const d of[[1,0],[-1,0],[0,1],[0,-1]])if(src[r+d[0]]&&src[r+d[0]][c+d[1]]&&src[r+d[0]][c+d[1]]!=='.')n++;if(n===0)g[r][c]='.';}}};
+  const S=g=>g.map(r=>r.join(''));
+  const paste=(g,src,ox,oy)=>{for(let r=0;r<src.length;r++)for(let c=0;c<src[0].length;c++){const v=src[r][c];if(v!=='.'&&g[r+oy]&&ox+c>=0&&ox+c<g[0].length)g[r+oy][ox+c]=v;}};
+  const DIG={'0':['XXX','X.X','X.X','X.X','XXX'],'1':['.X.','XX.','.X.','.X.','XXX'],'2':['XXX','..X','XXX','X..','XXX'],'3':['XXX','..X','XXX','..X','XXX'],'4':['X.X','X.X','XXX','..X','..X'],'5':['XXX','X..','XXX','..X','XXX'],'6':['XXX','X..','XXX','X.X','XXX'],'7':['XXX','..X','.X.','.X.','.X.'],'8':['XXX','X.X','XXX','X.X','XXX'],'9':['XXX','X.X','XXX','..X','XXX']};
+  const pixText=(g,x,y,str,ink)=>{let cx=x;for(const ch of str){const d=DIG[ch];if(d){for(let r=0;r<5;r++)for(let c=0;c<3;c++)if(d[r][c]==='X'&&g[y+r])g[y+r][cx+c]=ink;}cx+=4;}};
+  function heroCow(){const g=blank(36,40);
+    put(g,1,16,'cccc');put(g,2,15,'cccccc');rect(g,14,3,8,7,'c');rect(g,15,5,6,2,'R');outline(g,['c'],'d');
+    disc(g,5,23,3.5,4.5,'W');disc(g,31,23,3.5,4.5,'W');disc(g,5,23,1.6,2.4,'p');disc(g,31,23,1.6,2.4,'p');
+    disc(g,18,24,11.5,11,'W');disc(g,18,32,6.5,4.5,'c');outline(g,['W','c'],'d');
+    disc(g,23,18,3,2.4,'N');disc(g,11,27,2,1.6,'N');
+    disc(g,12.5,26,2.3,3,'K');disc(g,23.5,26,2.3,3,'K');put(g,23,11,'H');put(g,23,22,'H');put(g,24,12,'H');put(g,24,23,'H');
+    disc(g,8,30,2.2,1.6,'p');disc(g,28,30,2.2,1.6,'p');
+    put(g,32,16,'P');put(g,32,20,'P');rect(g,17,34,4,1,'P');put(g,16,34,'P');put(g,20,34,'P');
+    despeckle(g);return g;}
+  function smallCow(hat){const g=blank(22,26);
+    if(hat==='cone'){put(g,0,9,'WW');put(g,1,8,'WWWW');put(g,2,8,'WWWW');put(g,3,8,'tttt');put(g,4,9,'tt');put(g,5,10,'t');outline(g,['t'],'u');}
+    else if(hat==='milk'){put(g,0,9,'cccc');rect(g,8,1,6,5,'c');put(g,3,9,'RR');outline(g,['c'],'d');}
+    else{disc(g,11,3,3.5,3,'W');put(g,0,10,'W');outline(g,['W'],'d');}
+    disc(g,3,15,2.4,3,'W');disc(g,19,15,2.4,3,'W');put(g,15,3,'p');put(g,15,19,'p');
+    disc(g,11,16,8,7.5,'W');disc(g,11,21,4.5,3,'c');outline(g,['W','c'],'d');disc(g,15,12,2,1.6,'N');
+    disc(g,7.5,17,1.6,2.1,'K');disc(g,14.5,17,1.6,2.1,'K');put(g,15,6,'H');put(g,15,13,'H');
+    put(g,19,4,'p');put(g,20,4,'p');put(g,19,17,'p');put(g,20,17,'p');
+    put(g,22,9,'P');put(g,22,12,'P');put(g,23,10,'P');put(g,23,11,'P');despeckle(g);return g;}
+  function trio(){const g=blank(60,28);paste(g,smallCow('scoop'),1,2);paste(g,smallCow('milk'),20,2);paste(g,smallCow('cone'),39,2);return g;}
+  function badge(){const D2=46,cx=23,cy=22,g=blank(D2,D2);const dist=(x,y)=>Math.hypot(x-cx,y-cy);
+    for(let y=0;y<D2;y++)for(let x=0;x<D2;x++){const dd=dist(x,y);if(dd<=15.5)g[y][x]='c';if(dd>=17&&dd<=18.6)g[y][x]='d';if(dd>=15&&dd<=15.8)g[y][x]='L';}
+    paste(g,smallCow('milk'),12,7);rect(g,9,34,28,7,'d');put(g,8,36,'d');put(g,37,36,'d');rect(g,10,35,26,1,'L');pixText(g,16,37,'2021','c');despeckle(g);return g;}
+  return {P, list:[
+    {key:'hero', name:'A. 히어로 소', note:'단일 히어로 마스코트 · 파비콘/앱아이콘·게임 마크', sp:S(heroCow())},
+    {key:'trio', name:'B. 트리오', note:'원본 3마리 재해석(콘·우유팩·아이스크림 모자) · 브랜드 인지 최강', sp:S(trio())},
+    {key:'badge', name:'C. 밀크씰 배지', note:'크림 씰 + 이중 네이비 링 + 히어로 소 + 2021 리본 · 프리미엄', sp:S(badge())},
+  ]};
+}
+function drawSp(canvas,sp,pal,sc){const W=Math.max(...sp.map(r=>r.length)),H=sp.length;canvas.width=W*sc;canvas.height=H*sc;const x=canvas.getContext('2d');x.imageSmoothingEnabled=false;x.clearRect(0,0,canvas.width,canvas.height);for(let r=0;r<H;r++)for(let c=0;c<sp[r].length;c++){const col=pal[sp[r][c]];if(col){x.fillStyle=col;x.fillRect(c*sc,r*sc,sc,sc);}}}
+function dlCanvas(sp,pal,sc,fname){const cv=document.createElement('canvas');drawSp(cv,sp,pal,sc);const a=document.createElement('a');a.href=cv.toDataURL('image/png');a.download=fname;document.body.appendChild(a);a.click();a.remove();}
+function wordmarkCanvas(cv,pal,heroSp){
+  // 히어로 소(작게) + 사르르목장(Galmuri) + FRESH MILK ICE CREAM
+  const sc=4, cw=Math.max(...heroSp.map(r=>r.length))*sc, ch=heroSp.length*sc;
+  const W=Math.max(cw+2, 190), H=ch+56;
+  cv.width=W; cv.height=H; const x=cv.getContext('2d'); x.imageSmoothingEnabled=false; x.clearRect(0,0,W,H);
+  const tmp=document.createElement('canvas'); drawSp(tmp,heroSp,pal,sc);
+  x.drawImage(tmp,(W-cw)/2,0);
+  x.fillStyle='#385088'; x.textAlign='center';
+  x.font="20px Galmuri11, monospace";
+  x.fillText('사르르목장', W/2, ch+22);
+  x.font="9px Galmuri7, monospace";
+  x.fillStyle='#5a72aa';
+  x.fillText('FRESH MILK · ICE CREAM', W/2, ch+40);
+}
+function renderRedesign(){
+  const {P,list}=buildLogos(); const el=$('rdgrid'); if(!el) return; el.innerHTML='';
+  list.forEach(item=>{
+    const card=document.createElement('div'); card.className='rdcard';
+    const cv=document.createElement('canvas'); cv.className='rdimg';
+    const sc = item.key==='trio'?5:6; drawSp(cv,item.sp,P,sc); cv.style.maxWidth='190px';
+    card.appendChild(cv);
+    const n=document.createElement('div'); n.className='rn'; n.textContent=item.name; card.appendChild(n);
+    const d=document.createElement('div'); d.className='rd'; d.textContent=item.note; card.appendChild(d);
+    const dl=document.createElement('div'); dl.className='dl';
+    const a1=document.createElement('a'); a1.textContent='1x ↓'; a1.onclick=()=>dlCanvas(item.sp,P,1,'saruru-logo-'+item.key+'-1x.png'); dl.appendChild(a1);
+    const a2=document.createElement('a'); a2.textContent='고해상 ↓'; a2.onclick=()=>dlCanvas(item.sp,P,12,'saruru-logo-'+item.key+'-12x.png'); dl.appendChild(a2);
+    card.appendChild(dl); el.appendChild(card);
+  });
+  // D. 워드마크 락업 (Galmuri 폰트) — 폰트 로드 후 렌더
+  const hero=list[0].sp;
+  const card=document.createElement('div'); card.className='rdcard';
+  const cv=document.createElement('canvas'); cv.className='rdimg'; cv.style.maxWidth='210px';
+  const paint=()=>wordmarkCanvas(cv,P,hero);
+  paint(); if(document.fonts&&document.fonts.ready){document.fonts.ready.then(paint);} setTimeout(paint,600);
+  card.appendChild(cv);
+  const n=document.createElement('div'); n.className='rn'; n.textContent='D. 워드마크 락업'; card.appendChild(n);
+  const d=document.createElement('div'); d.className='rd'; d.textContent='히어로 소 + 사르르목장(픽셀 한글 Galmuri) + 영문 서브 · 웹 헤더/명함'; card.appendChild(d);
+  const dl=document.createElement('div'); dl.className='dl';
+  const a1=document.createElement('a'); a1.textContent='PNG ↓'; a1.onclick=()=>{const t=document.createElement('canvas');wordmarkCanvas(t,P,hero);const a=document.createElement('a');a.href=t.toDataURL('image/png');a.download='saruru-logo-wordmark.png';document.body.appendChild(a);a.click();a.remove();}; dl.appendChild(a1);
+  card.appendChild(dl); el.appendChild(card);
 }
 </script>
 </body>
