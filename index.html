@@ -433,16 +433,17 @@ function buildLogos(){
       for(let r=8;r<13;r++){const w=Math.max(1,12-r);for(let c=cx-w;c<=cx+w;c++)g[r][c]=((c-cx+r)%3===0)?'u':'t';}
     } else {discShade(g,cx,4,4.4,4,['W','c','c','y','Y']);put(g,1,cx-2,'WW');}
   }
+  const _LEGS=[[14,16],[19,21],[25,27],[30,32]];
   function renewCow(kind){const g=blank(46,58);const HX=23,HY=24;
-    for(const lx of [14,20,26,32]){discShade(g,lx,52,2,4,_BODY);}
-    discShade(g,23,43,11,8,_BODY);
+    discShade(g,23,42,11.5,7.5,_BODY);
+    for(const [a,b] of _LEGS){for(let r=47;r<53;r++)for(let c=a;c<=b;c++){g[r][c]=(c===b)?'s':(c===a?'e':'W');}}
     discShade(g,HX,HY,13,12,_BODY);
     discShade(g,10,17,3.4,4,_EAR);discShade(g,36,18,2.8,3.4,_EAR);
     topping(g,kind,HX);
     discShade(g,29,18,3.3,2.7,_NAVY);discShade(g,13,28,2.5,1.9,_NAVY);
     discShade(g,16,41,3,2.4,_NAVY);discShade(g,31,46,2.4,1.9,_NAVY);
     discShade(g,23,31,5.5,3.4,_PINK);
-    for(const lx of [14,20,26,32]){g[55][lx-1]='D';g[55][lx]='D';g[54][lx-1]='D';g[54][lx]='D';}
+    for(const [a,b] of _LEGS){for(let c=a;c<=b;c++){g[52][c]='D';if(g[51][c]==='.')g[51][c]='D';}}
     outlineDir(g,['W','e','s','S','c','y','Y','L','N','n','p','P','Q','t','u'],HX,32);
     disc(g,18,24,1.8,2.4,'K');disc(g,28,24,1.7,2.2,'K');
     put(g,23,17,'H');put(g,23,27,'H');put(g,26,18,'L');put(g,26,28,'L');
