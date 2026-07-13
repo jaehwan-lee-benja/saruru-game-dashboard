@@ -81,6 +81,18 @@
   .logocard .dl a{font-size:10.5px;color:var(--lake);text-decoration:none;font-weight:600;border:1px solid var(--line);border-radius:7px;padding:3px 9px}
   .logocard .dl a:hover{background:var(--brand-soft)}
   .subhead{font-size:11.5px;font-weight:700;color:var(--ink-2);margin:6px 0 10px}
+  /* 버전 이력 */
+  .vergrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(215px,1fr));gap:13px}
+  .vercard{background:var(--surface);border:1px solid var(--line);border-radius:13px;padding:15px 16px;box-shadow:var(--shadow);position:relative;overflow:hidden;display:flex;flex-direction:column;gap:5px}
+  .vercard::before{content:"";position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--lake)}
+  .vercard.cur::before{background:var(--brand)}
+  .vercard .vv{font-size:10.5px;font-weight:800;letter-spacing:.06em;color:var(--lake)}
+  .vercard.cur .vv{color:var(--brand)}
+  .vercard .vn{font-size:14px;font-weight:800}
+  .vercard .vd{font-size:11px;color:var(--ink-3);line-height:1.5;flex:1;margin:2px 0 4px}
+  .vercard .vp{align-self:flex-start;font-size:11.5px;font-weight:700;color:#fff;background:var(--brand);border-radius:8px;padding:5px 13px;text-decoration:none}
+  .vercard .vp:hover{filter:brightness(1.07)}
+  .vercard .badge{position:absolute;right:10px;top:11px;font-size:9px;font-weight:700;padding:2px 7px;border-radius:20px;background:var(--brand-soft);color:var(--brand)}
   footer{margin-top:42px;padding-top:16px;border-top:1px solid var(--line);font-size:11px;color:var(--ink-3);display:flex;flex-wrap:wrap;justify-content:space-between;gap:8px}
   footer code{font-family:var(--mono)}
   .loading{color:var(--ink-3);font-size:13px;padding:40px 0;text-align:center}
@@ -201,6 +213,12 @@ function renderApp(){
       <div class="plan-row"><span>🎁</span><span>경품 이벤트(본인확인 필요 시 승격)</span><span class="st gate">승인 게이트</span></div></div></div>
   </div>
 
+  <h2><span class="dot"></span>게임 버전 이력 <span class="tag live">플레이 가능</span></h2>
+  <div class="card">
+    <p class="cap">똥피하기가 발전해 온 버전들 — 각 <b>▶ 플레이</b>를 누르면 그 시점 버전을 그대로 플레이할 수 있어요.</p>
+    <div class="vergrid" id="vergrid"></div>
+  </div>
+
   <h2><span class="dot"></span>공통 공지 <span class="tag">배너</span></h2>
   <div class="card"><div class="notice">📢 <b>공지</b> — 이 영역에 고객 대상 공지·업데이트 소식을 노출합니다. (편집 연동 예정) · 현재 라이브 게임: <b>젖소 똥피하기</b> — <a href="https://jaehwan-lee-benja.github.io/saruru-game/" target="_blank" rel="noopener" style="color:var(--lake)">플레이 ↗</a></div></div>
 
@@ -251,6 +269,26 @@ function renderApp(){
   });}
   renderLogos('logo-masc',LOGOS_MASC);
   renderLogos('logo-full',LOGOS_FULL);
+  // 게임 버전 이력
+  const GBASE='https://jaehwan-lee-benja.github.io/saruru-game/';
+  const VERSIONS=[
+    {v:'v1', name:'M1 MVP', desc:'최초 똥피하기 — 이모지 캐릭터·로컬 플레이·재도전', path:'v1-mvp'},
+    {v:'v2', name:'브랜드 리뉴얼', desc:'사르르목장 젖소 로고 캐릭터 + 브랜드 톤 적용', path:'v2-brand'},
+    {v:'v3', name:'레트로 픽셀', desc:'레트로 픽셀아트 아트디렉션으로 전환', path:'v3-pixel'},
+    {v:'v4', name:'완성도 업', desc:'소 더 귀엽게·아이템 리파인·화살표 제거(정면 소)', path:'v4-cute'},
+    {v:'v5', name:'소 옆모습', desc:'측면뷰 송아지 + 이동방향 flip·걷기 애니메이션', path:'v5-sideview'},
+    {v:'v6', name:'폴리싱 (현재)', desc:'치비 소·아이템 고급화·반짝임·8bit 사운드·햅틱', path:'v6-polish', current:true},
+  ];
+  const vg=$('vergrid');
+  VERSIONS.forEach(v=>{
+    const c=document.createElement('div');c.className='vercard'+(v.current?' cur':'');
+    if(v.current){const b=document.createElement('div');b.className='badge';b.textContent='현재';c.appendChild(b);}
+    const vv=document.createElement('div');vv.className='vv';vv.textContent=v.v.toUpperCase();c.appendChild(vv);
+    const vn=document.createElement('div');vn.className='vn';vn.textContent=v.name;c.appendChild(vn);
+    const vd=document.createElement('div');vd.className='vd';vd.textContent=v.desc;c.appendChild(vd);
+    const vp=document.createElement('a');vp.className='vp';vp.href=GBASE+'versions/'+v.path+'/';vp.target='_blank';vp.rel='noopener';vp.textContent='▶ 플레이';c.appendChild(vp);
+    vg.appendChild(c);
+  });
 }
 </script>
 </body>
