@@ -152,7 +152,7 @@
 <script>
 const SB_URL='https://rstazttwlghsorpzsugy.supabase.co';
 const SB_ANON='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJzdGF6dHR3bGdoc29ycHpzdWd5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODMxMjI4NjAsImV4cCI6MjA5ODY5ODg2MH0.B5zrWLpG5vOFISWQeM8pD3UPBTYPHcmqYkD7rFBN6JM';
-const ALLOW='designerbenja@gmail.com';   // 관리자 게이트(M2 실데이터 연동 전까지 클라 체크; 이후 game 스키마 RLS로 승격)
+const ALLOW=['designerbenja@gmail.com','kbl0226@gmail.com'];   // 관리자 게이트(M2 실데이터 연동 전까지 클라 체크; 이후 game 스키마 RLS로 승격)
 const sb=supabase.createClient(SB_URL,SB_ANON);
 const $=id=>document.getElementById(id);
 
@@ -163,7 +163,7 @@ $('logout').onclick=()=>sb.auth.signOut();
 
 function gate(session){
   if(session){ $('login').classList.add('hide'); $('appwrap').classList.remove('hide'); $('who').textContent=session.user.email;
-    if((session.user.email||'').toLowerCase()===ALLOW){ renderApp(); }
+    if(ALLOW.includes((session.user.email||'').toLowerCase())){ renderApp(); }
     else { $('app').innerHTML='<div id="denied"><h2>열람 권한이 없습니다</h2><p style="color:var(--ink-2);font-size:13px">이 계정은 대시보드 접근이 허용되지 않았습니다. 등록된 관리자 계정으로 로그인하세요.</p></div>'; }
   } else { $('appwrap').classList.add('hide'); $('login').classList.remove('hide'); $('gbtn').disabled=false; $('lmsg').textContent=''; }
 }
