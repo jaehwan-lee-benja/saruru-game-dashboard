@@ -322,14 +322,17 @@ function buildLogos(){
   const paste=(g,src,ox,oy)=>{for(let r=0;r<src.length;r++)for(let c=0;c<src[0].length;c++){const v=src[r][c];if(v!=='.'&&g[r+oy]&&ox+c>=0&&ox+c<g[0].length)g[r+oy][ox+c]=v;}};
   const DIG={'0':['XXX','X.X','X.X','X.X','XXX'],'1':['.X.','XX.','.X.','.X.','XXX'],'2':['XXX','..X','XXX','X..','XXX'],'3':['XXX','..X','XXX','..X','XXX'],'4':['X.X','X.X','XXX','..X','..X'],'5':['XXX','X..','XXX','..X','XXX'],'6':['XXX','X..','XXX','X.X','XXX'],'7':['XXX','..X','.X.','.X.','.X.'],'8':['XXX','X.X','XXX','X.X','XXX'],'9':['XXX','X.X','XXX','..X','XXX']};
   const pixText=(g,x,y,str,ink)=>{let cx=x;for(const ch of str){const d=DIG[ch];if(d){for(let r=0;r<5;r++)for(let c=0;c<3;c++)if(d[r][c]==='X'&&g[y+r])g[y+r][cx+c]=ink;}cx+=4;}};
-  function heroCow(){const g=blank(36,40);
-    put(g,1,16,'cccc');put(g,2,15,'cccccc');rect(g,14,3,8,7,'c');rect(g,15,5,6,2,'R');outline(g,['c'],'d');
-    disc(g,5,23,3.5,4.5,'W');disc(g,31,23,3.5,4.5,'W');disc(g,5,23,1.6,2.4,'p');disc(g,31,23,1.6,2.4,'p');
-    disc(g,18,24,11.5,11,'W');disc(g,18,32,6.5,4.5,'c');outline(g,['W','c'],'d');
-    disc(g,23,18,3,2.4,'N');disc(g,11,27,2,1.6,'N');
-    disc(g,12.5,26,2.3,3,'K');disc(g,23.5,26,2.3,3,'K');put(g,23,11,'H');put(g,23,22,'H');put(g,24,12,'H');put(g,24,23,'H');
-    disc(g,8,30,2.2,1.6,'p');disc(g,28,30,2.2,1.6,'p');
-    put(g,32,16,'P');put(g,32,20,'P');rect(g,17,34,4,1,'P');put(g,16,34,'P');put(g,20,34,'P');
+  const leaf=(g,x0,y0,dx,dy,len,ch)=>{for(let t=0;t<len;t++){const x=Math.round(x0+dx*t/len),y=Math.round(y0+dy*t/len);const w=Math.round((0.5-Math.abs(t/len-0.42))*3.4)+1;for(let k=-w;k<=w;k++){const xx=x+k;if(g[y]&&xx>=0&&xx<g[0].length)g[y][xx]=ch;}}};
+  function heroCow(){const g=blank(40,46);const T=2; // 원본 충실 + 살짝 3/4 고개 돌림
+    put(g,0,18,'cccc');put(g,1,17,'cccccc');rect(g,16,2,8,7,'c');rect(g,17,4,6,2,'R');outline(g,['c'],'d'); // 띄운 우유팩 모자
+    leaf(g,12,20,-9,-7,13,'W');leaf(g,29,21,9,-4,11,'W'); // 잎사귀 귀(좌 큼·우 눕힘)
+    disc(g,20,28,13,12.5,'W');outline(g,['W'],'d');
+    disc(g,26+T,20,3.6,3,'N');disc(g,12,31,2.4,1.8,'N'); // 이마+볼 반점
+    disc(g,15+T,26,1.7,2.4,'K');disc(g,25+T,26,1.6,2.2,'K');put(g,25+T,15+T,'H');put(g,25+T,25+T,'H'); // 작은 콩 눈
+    disc(g,20+T,36,8,4.5,'c');outline(g,['c'],'d'); // 주둥이
+    put(g,34,17+T,'P');put(g,34,23+T,'P'); // 콧구멍
+    put(g,37,15+T,'d');put(g,38,16+T,'d');put(g,38,17+T,'d');put(g,38,18+T,'d');put(g,38,19+T,'d');put(g,38,20+T,'d');put(g,38,21+T,'d');put(g,38,22+T,'d');put(g,37,23+T,'d'); // 미소
+    disc(g,10,33,1.9,1.4,'p');disc(g,31,33,1.9,1.4,'p'); // 볼터치
     despeckle(g);return g;}
   function smallCow(hat){const g=blank(22,26);
     if(hat==='cone'){put(g,0,9,'WW');put(g,1,8,'WWWW');put(g,2,8,'WWWW');put(g,3,8,'tttt');put(g,4,9,'tt');put(g,5,10,'t');outline(g,['t'],'u');}
