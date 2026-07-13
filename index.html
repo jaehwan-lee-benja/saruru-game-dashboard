@@ -244,6 +244,8 @@ function renderApp(){
   <div class="card">
     <p class="cap">기계적 축소가 아니라 <b>브랜드에 맞게 예쁜 픽셀아트로 재해석</b> — 젖소 · 네이비 <code style="font-family:var(--mono)">#385088</code> · 우유 모티프로 <b>사르르목장 정체성</b> 유지. 인기 픽셀 마스코트 로고 학습 반영(치비 비율·큰 눈+글린트·볼터치·3톤 네이비). <b>여러 시안 → 피드백 받아 다듬는 전제(v1)</b>. 각 카드 다운로드 가능.</p>
     <div class="rdgrid" id="rdgrid"></div>
+    <div class="subhead" style="margin-top:20px">🎬 움직이는 미리보기 (실험 — 확정 시안 기준으로 발전)</div>
+    <div id="rdanim"></div>
     <div class="subhead" style="margin-top:22px">🕓 디자인 히스토리 (반복 개선 과정 — ★ = 현재 채택 · 대표님과 비교용)</div>
     <div id="rdhistory"></div>
   </div>
@@ -409,6 +411,29 @@ function buildLogos(){
 }
 function drawSp(canvas,sp,pal,sc){const W=Math.max(...sp.map(r=>r.length)),H=sp.length;canvas.width=W*sc;canvas.height=H*sc;const x=canvas.getContext('2d');x.imageSmoothingEnabled=false;x.clearRect(0,0,canvas.width,canvas.height);for(let r=0;r<H;r++)for(let c=0;c<sp[r].length;c++){const col=pal[sp[r][c]];if(col){x.fillStyle=col;x.fillRect(c*sc,r*sc,sc,sc);}}}
 function dlCanvas(sp,pal,sc,fname){const cv=document.createElement('canvas');drawSp(cv,sp,pal,sc);const a=document.createElement('a');a.href=cv.toDataURL('image/png');a.download=fname;document.body.appendChild(a);a.click();a.remove();}
+let _animRAF=null;
+function animHero(cv,pal,sp){
+  const sc=5, W=Math.max(...sp.map(r=>r.length)), H=sp.length, EX=2;
+  cv.width=W*sc; cv.height=(H+EX)*sc;
+  const x=cv.getContext('2d'); x.imageSmoothingEnabled=false;
+  if(_animRAF)cancelAnimationFrame(_animRAF);
+  let t0=null;
+  function frame(now){
+    if(t0==null)t0=now; const t=(now-t0)/1000;
+    const bob=(Math.sin(t*1.7)>0.4)?1:0;      // 숨쉬기(1px 위)
+    const blink=(t%3.2)<0.13;                  // 3.2s마다 눈 깜빡
+    x.clearRect(0,0,cv.width,cv.height);
+    for(let r=0;r<H;r++)for(let c=0;c<sp[r].length;c++){const col=pal[sp[r][c]];if(col){x.fillStyle=col;x.fillRect(c*sc,(r+EX-bob)*sc,sc,sc);}}
+    if(blink){ // 눈 감음(흰 덮개 + 진네이비 라인)
+      x.fillStyle=pal.W;
+      x.fillRect(14*sc,(22+EX-bob)*sc,5*sc,5*sc); x.fillRect(24*sc,(22+EX-bob)*sc,5*sc,5*sc);
+      x.fillStyle=pal.D;
+      x.fillRect(15*sc,(24+EX-bob)*sc,3*sc,sc); x.fillRect(25*sc,(24+EX-bob)*sc,3*sc,sc);
+    }
+    _animRAF=requestAnimationFrame(frame);
+  }
+  _animRAF=requestAnimationFrame(frame);
+}
 function wordmarkCanvas(cv,pal,heroSp){
   // 히어로 소(작게) + 사르르목장(Galmuri) + FRESH MILK ICE CREAM
   const sc=4, cw=Math.max(...heroSp.map(r=>r.length))*sc, ch=heroSp.length*sc;
@@ -454,6 +479,16 @@ function renderRedesign(){
   el.appendChild(mkLogoCard(R.main[1],P));      // B
   el.appendChild(mkLogoCard(R.main[2],P));      // C
   el.appendChild(mkWordmarkCard(R.hero,P));     // D
+  // 🎬 움직이는 미리보기 (히어로 소 아이들 애니메이션)
+  const anim=$('rdanim'); if(anim){ anim.innerHTML='';
+    const card=document.createElement('div'); card.className='rdcard'; card.style.maxWidth='240px';
+    const cv=document.createElement('canvas'); cv.className='rdimg'; cv.style.maxWidth='150px';
+    card.appendChild(cv);
+    const n=document.createElement('div'); n.className='rn'; n.textContent='🎬 히어로 소 · 아이들 애니메이션'; card.appendChild(n);
+    const d=document.createElement('div'); d.className='rd'; d.textContent='눈 깜빡 + 숨쉬기 바운스 · 게임 UI/로딩·SNS 프로필 등 활용(확정 시안 기준으로 발전)'; card.appendChild(d);
+    anim.appendChild(card);
+    animHero(cv, P, R.hero);
+  }
   // 디자인 히스토리
   const hist=$('rdhistory'); if(!hist) return; hist.innerHTML='';
   R.history.forEach(gr=>{
