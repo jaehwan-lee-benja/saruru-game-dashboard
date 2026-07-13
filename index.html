@@ -449,11 +449,11 @@ function mkWordmarkCard(heroSp,P){
 }
 function renderRedesign(){
   const R=buildLogos(); const P=R.P; const el=$('rdgrid'); if(!el) return; el.innerHTML='';
-  // 순서: A(히어로) → D(워드마크) → B(트리오) → C(배지)  [A·D 같은 계열]
+  // 순서: A(히어로) → B(트리오) → C(배지) → D(워드마크)
   el.appendChild(mkLogoCard(R.main[0],P));      // A
-  el.appendChild(mkWordmarkCard(R.hero,P));     // D
   el.appendChild(mkLogoCard(R.main[1],P));      // B
   el.appendChild(mkLogoCard(R.main[2],P));      // C
+  el.appendChild(mkWordmarkCard(R.hero,P));     // D
   // 디자인 히스토리
   const hist=$('rdhistory'); if(!hist) return; hist.innerHTML='';
   R.history.forEach(gr=>{
