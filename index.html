@@ -244,7 +244,7 @@ function renderApp(){
   <div class="card">
     <p class="cap">기계적 축소가 아니라 <b>브랜드에 맞게 예쁜 픽셀아트로 재해석</b> — 젖소 · 네이비 <code style="font-family:var(--mono)">#385088</code> · 우유 모티프로 <b>사르르목장 정체성</b> 유지. 인기 픽셀 마스코트 로고 학습 반영(치비 비율·큰 눈+글린트·볼터치·3톤 네이비). <b>여러 시안 → 피드백 받아 다듬는 전제(v1)</b>. 각 카드 다운로드 가능.</p>
     <div class="subhead" style="margin-top:2px">✨ 소프트 셰이딩 리뉴얼 <span style="color:var(--brand)">신규</span> — Story of Seasons 풍 참고(스타일만), 우리 정체성 유지</div>
-    <div id="rdrenew"></div>
+    <div id="rdrenew" class="rdgrid"></div>
     <div class="subhead" style="margin-top:22px">🎨 기존 시안 세트 (A·B·C·D)</div>
     <div class="rdgrid" id="rdgrid"></div>
     <div class="subhead" style="margin-top:20px">🎬 움직이는 미리보기 (실험 — 확정 시안 기준으로 발전)</div>
@@ -405,7 +405,7 @@ function buildLogos(){
   // ── 소프트 셰이딩 리뉴얼 (Story of Seasons 풍) ──
   function discShade(g,cx,cy,rx,ry,ramp,over){for(let r=0;r<g.length;r++)for(let c=0;c<g[0].length;c++){const dx=(c-cx)/rx,dy=(r-cy)/ry,d2=dx*dx+dy*dy;if(d2<=1){if(over&&g[r][c]!=='.'&&g[r][c]!==over)continue;const light=-(dx*0.62+dy*0.62);let v=light*0.5+0.5;if(d2>0.72)v-=0.34;if(d2>0.92)v-=0.18;let idx=Math.floor((1-v)*ramp.length);idx=Math.max(0,Math.min(ramp.length-1,idx));g[r][c]=ramp[idx];}}}
   function outlineDir(g,fills,cx,cy){const H=g.length,W=g[0].length,src=g.map(r=>r.slice()),F=new Set(fills);for(let r=0;r<H;r++)for(let c=0;c<W;c++){if(src[r][c]==='.'){let adj=false;for(const dd of [[1,0],[-1,0],[0,1],[0,-1],[1,1],[1,-1],[-1,1],[-1,-1]])if(src[r+dd[0]]&&F.has(src[r+dd[0]][c+dd[1]]))adj=true;if(adj){const dirv=(c-cx)+(r-cy);g[r][c]=dirv>6?'X':dirv>-4?'D':'L';}}}}
-  const renewPal={'.':null,X:'#1c2748',D:'#26365e',d:'#385088',L:'#5a72aa',W:'#ffffff',e:'#eff4fc',s:'#d6e0f1',S:'#bcccea',N:'#3f5896',n:'#2a3d6e',c:'#fff6e6',y:'#f3e6c6',Y:'#e2cfa4',p:'#ffd9e2',P:'#f4a9b8',Q:'#e07d94',K:'#26365e',H:'#ffffff'};
+  const renewPal={'.':null,X:'#1c2748',D:'#26365e',d:'#385088',L:'#5a72aa',W:'#ffffff',e:'#eff4fc',s:'#d6e0f1',S:'#bcccea',N:'#3f5896',n:'#2a3d6e',c:'#fff6e6',y:'#f3e6c6',Y:'#e2cfa4',p:'#ffd9e2',P:'#f4a9b8',Q:'#e07d94',K:'#26365e',H:'#ffffff',t:'#f4d9a2',u:'#dcb873',r:'#c69a5a'};
   function renewHero(){const g=blank(40,42);const HX=20,HY=23;
     put(g,0,18,'cccc');put(g,1,17,'cccccc');
     for(let r=2;r<10;r++)for(let c=16;c<24;c++)g[r][c]='c';
@@ -422,7 +422,36 @@ function buildLogos(){
     put(g,32,17,'Q');put(g,33,18,'Q');put(g,33,19,'Q');put(g,33,20,'Q');put(g,33,21,'Q');put(g,32,22,'Q');
     disc(g,10,30,1.9,1.4,'P');disc(g,30,30,1.9,1.4,'P');
     despeckle(g);return g;}
-  return {P, hero:S(heroCow()), renew:{sp:S(renewHero()), pal:renewPal}, main:[
+  // ── 전신 소 + 머리 토핑 3종 ──
+  const _BODY=['W','W','e','e','s','s','S'],_EAR=['W','e','s','S'],_PINK=['p','P','P','Q'],_NAVY=['N','N','n'];
+  function topping(g,kind,cx){
+    if(kind==='milk'){put(g,0,cx-2,'cccc');put(g,1,cx-3,'cccccc');
+      for(let r=2;r<11;r++)for(let c=cx-4;c<cx+4;c++)g[r][c]='c';
+      for(let r=2;r<11;r++){g[r][cx-4]='W';g[r][cx-3]='W';g[r][cx+2]='y';g[r][cx+3]='Y';}
+      for(let c=cx-2;c<cx+2;c++){g[5][c]='L';g[6][c]='L';g[7][c]='L';}
+    } else if(kind==='cone'){discShade(g,cx,4,4,3.6,['W','W','e','e','s']);put(g,0,cx-1,'WW');
+      for(let r=8;r<13;r++){const w=Math.max(1,12-r);for(let c=cx-w;c<=cx+w;c++)g[r][c]=((c-cx+r)%3===0)?'u':'t';}
+    } else {discShade(g,cx,4,4.4,4,['W','c','c','y','Y']);put(g,1,cx-2,'WW');}
+  }
+  function renewCow(kind){const g=blank(46,58);const HX=23,HY=24;
+    for(const lx of [14,20,26,32]){discShade(g,lx,52,2,4,_BODY);}
+    discShade(g,23,43,11,8,_BODY);
+    discShade(g,HX,HY,13,12,_BODY);
+    discShade(g,10,17,3.4,4,_EAR);discShade(g,36,18,2.8,3.4,_EAR);
+    topping(g,kind,HX);
+    discShade(g,29,18,3.3,2.7,_NAVY);discShade(g,13,28,2.5,1.9,_NAVY);
+    discShade(g,16,41,3,2.4,_NAVY);discShade(g,31,46,2.4,1.9,_NAVY);
+    discShade(g,23,31,5.5,3.4,_PINK);
+    for(const lx of [14,20,26,32]){g[55][lx-1]='D';g[55][lx]='D';g[54][lx-1]='D';g[54][lx]='D';}
+    outlineDir(g,['W','e','s','S','c','y','Y','L','N','n','p','P','Q','t','u'],HX,32);
+    disc(g,18,24,1.8,2.4,'K');disc(g,28,24,1.7,2.2,'K');
+    put(g,23,17,'H');put(g,23,27,'H');put(g,26,18,'L');put(g,26,28,'L');
+    put(g,30,21,'Q');put(g,30,25,'Q');
+    put(g,33,20,'Q');put(g,34,21,'Q');put(g,34,22,'Q');put(g,34,23,'Q');put(g,34,24,'Q');put(g,33,25,'Q');
+    disc(g,13,31,1.9,1.4,'P');disc(g,33,31,1.9,1.4,'P');
+    despeckle(g);return g;}
+  return {P, hero:S(heroCow()), renew:{sp:S(renewHero()), pal:renewPal,
+    full:[{key:'milk',name:'전신 소 · 우유팩',sp:S(renewCow('milk'))},{key:'cone',name:'전신 소 · 소프트콘',sp:S(renewCow('cone'))},{key:'scoop',name:'전신 소 · 스쿱',sp:S(renewCow('scoop'))}]}, main:[
     {key:'hero', name:'A. 히어로 소', note:'단일 히어로 마스코트 · 파비콘/앱아이콘·게임 마크', sp:S(heroCow())},
     {key:'trio', name:'B. 트리오', note:'원본 3마리 재해석(콘·우유팩·아이스크림 모자) · 이전(둥근 귀) 채택', sp:S(trioFrom(smallOld))},
     {key:'badge', name:'C. 밀크씰 배지', note:'크림 씰 + 이중 네이비 링 + 소 + 2021 리본 · 이전(둥근 귀) 채택', sp:S(badgeOld())},
@@ -499,15 +528,21 @@ function renderRedesign(){
   const R=buildLogos(); const P=R.P; const el=$('rdgrid'); if(!el) return; el.innerHTML='';
   // ✨ 소프트 셰이딩 리뉴얼 (신규 · 자체 팔레트)
   const rn=$('rdrenew'); if(rn && R.renew){ rn.innerHTML='';
-    const rp=R.renew.pal, rsp=R.renew.sp;
-    const card=document.createElement('div'); card.className='rdcard'; card.style.maxWidth='260px';
-    const cv=document.createElement('canvas'); cv.className='rdimg'; drawSp(cv,rsp,rp,7); cv.style.maxWidth='210px'; card.appendChild(cv);
-    const n=document.createElement('div'); n.className='rn'; n.textContent='히어로 소 · 소프트 셰이딩'; card.appendChild(n);
-    const d=document.createElement('div'); d.className='rd'; d.textContent='부드러운 명암(광원 좌상단)·방향성 아웃라인·귀여운 비율 · 젖소·우유팩·네이비#385088 유지'; card.appendChild(d);
-    const dl=document.createElement('div'); dl.className='dl';
-    const a1=document.createElement('a'); a1.textContent='1x ↓'; a1.onclick=()=>dlCanvas(rsp,rp,1,'saruru-logo-renew-1x.png'); dl.appendChild(a1);
-    const a2=document.createElement('a'); a2.textContent='고해상 ↓'; a2.onclick=()=>dlCanvas(rsp,rp,12,'saruru-logo-renew-12x.png'); dl.appendChild(a2);
-    card.appendChild(dl); rn.appendChild(card);
+    const rp=R.renew.pal;
+    const mk=(sp,name,note,fn,sc)=>{
+      const card=document.createElement('div'); card.className='rdcard'; card.style.maxWidth='210px';
+      const cv=document.createElement('canvas'); cv.className='rdimg'; drawSp(cv,sp,rp,sc||6); cv.style.maxWidth='170px'; card.appendChild(cv);
+      const n=document.createElement('div'); n.className='rn'; n.textContent=name; card.appendChild(n);
+      const d=document.createElement('div'); d.className='rd'; d.textContent=note; card.appendChild(d);
+      const dl=document.createElement('div'); dl.className='dl';
+      const a1=document.createElement('a'); a1.textContent='1x ↓'; a1.onclick=()=>dlCanvas(sp,rp,1,fn+'-1x.png'); dl.appendChild(a1);
+      const a2=document.createElement('a'); a2.textContent='고해상 ↓'; a2.onclick=()=>dlCanvas(sp,rp,12,fn+'-12x.png'); dl.appendChild(a2);
+      card.appendChild(dl); return card;
+    };
+    // 얼굴 마크(파비콘/앱아이콘)
+    rn.appendChild(mk(R.renew.sp,'얼굴 마크 · 소프트 셰이딩','부드러운 명암·방향성 아웃라인 · 파비콘/앱아이콘용','saruru-logo-face',7));
+    // 전신 소 + 토핑 3종
+    R.renew.full.forEach(f=>rn.appendChild(mk(f.sp,f.name,'전신 마스코트 · 머리 토핑('+({milk:'우유팩',cone:'소프트콘',scoop:'스쿱'})[f.key]+') · 굿즈/스티커','saruru-logo-full-'+f.key,6)));
   }
   // 순서: A(히어로) → B(트리오) → C(배지) → D(워드마크)
   el.appendChild(mkLogoCard(R.main[0],P));      // A
