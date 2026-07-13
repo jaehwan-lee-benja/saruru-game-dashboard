@@ -92,6 +92,13 @@
   .rdcard .dl{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;margin-top:2px}
   .rdcard .dl a{font-size:10.5px;color:var(--lake);text-decoration:none;font-weight:600;border:1px solid var(--line);border-radius:7px;padding:3px 9px;cursor:pointer}
   .rdcard .dl a:hover{background:var(--brand-soft)}
+  #rdhistory .histgroup{margin-top:14px}
+  #rdhistory .hglabel{font-size:11.5px;font-weight:700;color:var(--ink-2);margin-bottom:7px}
+  #rdhistory .histrow{display:flex;gap:16px;flex-wrap:wrap;align-items:flex-end}
+  #rdhistory .histitem{text-align:center}
+  #rdhistory .histitem canvas{background:repeating-conic-gradient(#0000 0 90deg,color-mix(in srgb,var(--ink) 4%,transparent) 0 180deg) 0 0/14px 14px;border:1px solid var(--line-2);border-radius:8px;image-rendering:pixelated;max-height:120px}
+  #rdhistory .histitem .hl{font-size:10px;color:var(--ink-3);margin-top:4px}
+  #rdhistory .histitem .hl.cur{color:var(--brand);font-weight:700}
   /* 버전 이력 */
   .vergrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(215px,1fr));gap:13px}
   .vercard{background:var(--surface);border:1px solid var(--line);border-radius:13px;padding:15px 16px;box-shadow:var(--shadow);position:relative;overflow:hidden;display:flex;flex-direction:column;gap:5px}
@@ -237,6 +244,8 @@ function renderApp(){
   <div class="card">
     <p class="cap">기계적 축소가 아니라 <b>브랜드에 맞게 예쁜 픽셀아트로 재해석</b> — 젖소 · 네이비 <code style="font-family:var(--mono)">#385088</code> · 우유 모티프로 <b>사르르목장 정체성</b> 유지. 인기 픽셀 마스코트 로고 학습 반영(치비 비율·큰 눈+글린트·볼터치·3톤 네이비). <b>여러 시안 → 피드백 받아 다듬는 전제(v1)</b>. 각 카드 다운로드 가능.</p>
     <div class="rdgrid" id="rdgrid"></div>
+    <div class="subhead" style="margin-top:22px">🕓 디자인 히스토리 (반복 개선 과정 — ★ = 현재 채택 · 대표님과 비교용)</div>
+    <div id="rdhistory"></div>
   </div>
 
   <h2><span class="dot"></span>로고 픽셀 — 변형 최소 픽셀화 <span class="tag live">게임 + 굿즈</span></h2>
@@ -323,18 +332,53 @@ function buildLogos(){
   const DIG={'0':['XXX','X.X','X.X','X.X','XXX'],'1':['.X.','XX.','.X.','.X.','XXX'],'2':['XXX','..X','XXX','X..','XXX'],'3':['XXX','..X','XXX','..X','XXX'],'4':['X.X','X.X','XXX','..X','..X'],'5':['XXX','X..','XXX','..X','XXX'],'6':['XXX','X..','XXX','X.X','XXX'],'7':['XXX','..X','.X.','.X.','.X.'],'8':['XXX','X.X','XXX','X.X','XXX'],'9':['XXX','X.X','XXX','..X','XXX']};
   const pixText=(g,x,y,str,ink)=>{let cx=x;for(const ch of str){const d=DIG[ch];if(d){for(let r=0;r<5;r++)for(let c=0;c<3;c++)if(d[r][c]==='X'&&g[y+r])g[y+r][cx+c]=ink;}cx+=4;}};
   const ear=(g,cx,cy,dir,big,ch,sc)=>{const s=(big?1:0.86)*(sc||1);disc(g,cx,cy,3.1*s,3.5*s,ch);disc(g,cx+dir*2.4*(sc||1),cy-2.6*(sc||1),2.4*s,3*s,ch);disc(g,cx+dir*3.4*(sc||1),cy-4.6*(sc||1),1.4*s,1.8*s,ch);};
-  function heroCow(){const g=blank(38,40);const T=2; // 둥근 머리·짧은 원본형 귀·살짝 3/4
-    put(g,0,17,'cccc');put(g,1,16,'cccccc');rect(g,15,2,8,6,'c');rect(g,16,4,6,2,'R');outline(g,['c'],'d'); // 띄운 우유팩 모자
-    ear(g,8,18,-1,true,'W');ear(g,30,19,1,false,'W'); // 짧은 잎사귀 귀
+  const leaf=(g,x0,y0,dx,dy,len,ch)=>{for(let t=0;t<len;t++){const x=Math.round(x0+dx*t/len),y=Math.round(y0+dy*t/len);const w=Math.round((0.5-Math.abs(t/len-0.42))*3.4)+1;for(let k=-w;k<=w;k++){const xx=x+k;if(g[y]&&xx>=0&&xx<g[0].length)g[y][xx]=ch;}}};
+  // 현재 히어로(v3): 둥근 머리·짧은 잎사귀 귀·살짝 3/4
+  function heroCow(){const g=blank(38,40);const T=2;
+    put(g,0,17,'cccc');put(g,1,16,'cccccc');rect(g,15,2,8,6,'c');rect(g,16,4,6,2,'R');outline(g,['c'],'d');
+    ear(g,8,18,-1,true,'W');ear(g,30,19,1,false,'W');
     disc(g,19,25,13,11.5,'W');outline(g,['W'],'d');
-    disc(g,22+T,17,3,2.5,'N');disc(g,11,28,2.3,1.8,'N'); // 이마+볼 반점
-    disc(g,14+T,24,1.7,2.3,'K');disc(g,24+T,24,1.6,2.1,'K');put(g,23+T,14+T,'H');put(g,23+T,24+T,'H'); // 작은 콩 눈
-    disc(g,19+T,32,7.5,4.2,'c');outline(g,['c'],'d'); // 주둥이
-    put(g,31,16+T,'P');put(g,31,22+T,'P'); // 콧구멍
-    put(g,34,14+T,'d');put(g,35,15+T,'d');put(g,35,16+T,'d');put(g,35,17+T,'d');put(g,35,18+T,'d');put(g,35,19+T,'d');put(g,35,20+T,'d');put(g,35,21+T,'d');put(g,34,22+T,'d'); // 미소
-    disc(g,9,30,1.9,1.4,'p');disc(g,30,30,1.9,1.4,'p'); // 볼터치
+    disc(g,22+T,17,3,2.5,'N');disc(g,11,28,2.3,1.8,'N');
+    disc(g,14+T,24,1.7,2.3,'K');disc(g,24+T,24,1.6,2.1,'K');put(g,23+T,14+T,'H');put(g,23+T,24+T,'H');
+    disc(g,19+T,32,7.5,4.2,'c');outline(g,['c'],'d');
+    put(g,31,16+T,'P');put(g,31,22+T,'P');
+    put(g,34,14+T,'d');put(g,35,15+T,'d');put(g,35,16+T,'d');put(g,35,17+T,'d');put(g,35,18+T,'d');put(g,35,19+T,'d');put(g,35,20+T,'d');put(g,35,21+T,'d');put(g,34,22+T,'d');
+    disc(g,9,30,1.9,1.4,'p');disc(g,30,30,1.9,1.4,'p');
     despeckle(g);return g;}
-  function smallCow(hat){const g=blank(24,30);const T=1;
+  // 히스토리 v1: 정면·큰 원형 눈(초안)
+  function heroV1(){const g=blank(36,40);
+    put(g,1,16,'cccc');put(g,2,15,'cccccc');rect(g,14,3,8,7,'c');rect(g,15,5,6,2,'R');outline(g,['c'],'d');
+    disc(g,5,23,3.5,4.5,'W');disc(g,31,23,3.5,4.5,'W');disc(g,5,23,1.6,2.4,'p');disc(g,31,23,1.6,2.4,'p');
+    disc(g,18,24,11.5,11,'W');disc(g,18,32,6.5,4.5,'c');outline(g,['W','c'],'d');
+    disc(g,23,18,3,2.4,'N');disc(g,11,27,2,1.6,'N');
+    disc(g,12.5,26,2.3,3,'K');disc(g,23.5,26,2.3,3,'K');put(g,23,11,'H');put(g,23,22,'H');put(g,24,12,'H');put(g,24,23,'H');
+    disc(g,8,30,2.2,1.6,'p');disc(g,28,30,2.2,1.6,'p');
+    put(g,32,16,'P');put(g,32,20,'P');rect(g,17,34,4,1,'P');put(g,16,34,'P');put(g,20,34,'P');
+    despeckle(g);return g;}
+  // 히스토리 v2: 긴 잎사귀 귀(길어짐)
+  function heroV2(){const g=blank(40,46);const T=2;
+    put(g,0,18,'cccc');put(g,1,17,'cccccc');rect(g,16,2,8,7,'c');rect(g,17,4,6,2,'R');outline(g,['c'],'d');
+    leaf(g,12,20,-9,-7,13,'W');leaf(g,29,21,9,-4,11,'W');
+    disc(g,20,28,13,12.5,'W');outline(g,['W'],'d');
+    disc(g,26+T,20,3.6,3,'N');disc(g,12,31,2.4,1.8,'N');
+    disc(g,15+T,26,1.7,2.4,'K');disc(g,25+T,26,1.6,2.2,'K');put(g,25+T,15+T,'H');put(g,25+T,25+T,'H');
+    disc(g,20+T,36,8,4.5,'c');outline(g,['c'],'d');
+    put(g,34,17+T,'P');put(g,34,23+T,'P');
+    put(g,37,15+T,'d');put(g,38,16+T,'d');put(g,38,17+T,'d');put(g,38,18+T,'d');put(g,38,19+T,'d');put(g,38,20+T,'d');put(g,38,21+T,'d');put(g,38,22+T,'d');put(g,37,23+T,'d');
+    disc(g,10,33,1.9,1.4,'p');disc(g,31,33,1.9,1.4,'p');
+    despeckle(g);return g;}
+  // 작은 소 v1(현재 선택): 둥근 disc 귀
+  function smallOld(hat){const g=blank(22,26);
+    if(hat==='cone'){put(g,0,9,'WW');put(g,1,8,'WWWW');put(g,2,8,'WWWW');put(g,3,8,'tttt');put(g,4,9,'tt');put(g,5,10,'t');outline(g,['t'],'u');}
+    else if(hat==='milk'){put(g,0,9,'cccc');rect(g,8,1,6,5,'c');put(g,3,9,'RR');outline(g,['c'],'d');}
+    else{disc(g,11,3,3.5,3,'W');put(g,0,10,'W');outline(g,['W'],'d');}
+    disc(g,3,15,2.4,3,'W');disc(g,19,15,2.4,3,'W');put(g,15,3,'p');put(g,15,19,'p');
+    disc(g,11,16,8,7.5,'W');disc(g,11,21,4.5,3,'c');outline(g,['W','c'],'d');disc(g,15,12,2,1.6,'N');
+    disc(g,7.5,17,1.6,2.1,'K');disc(g,14.5,17,1.6,2.1,'K');put(g,15,6,'H');put(g,15,13,'H');
+    put(g,19,4,'p');put(g,20,4,'p');put(g,19,17,'p');put(g,20,17,'p');
+    put(g,22,9,'P');put(g,22,12,'P');put(g,23,10,'P');put(g,23,11,'P');despeckle(g);return g;}
+  // 작은 소 v2(실험): 잎사귀 귀
+  function smallNew(hat){const g=blank(24,30);const T=1;
     if(hat==='milk'){rect(g,9,0,6,5,'c');rect(g,10,2,4,1,'R');outline(g,['c'],'d');}
     else if(hat==='cone'){put(g,4,10,'tttt');put(g,5,11,'ttt');put(g,6,12,'t');outline(g,['t'],'u');disc(g,12,3,3,2.6,'W');outline(g,['W'],'d');}
     else{disc(g,12,3,3.3,2.8,'W');disc(g,11,1,1.6,1.4,'W');outline(g,['W'],'d');}
@@ -346,14 +390,21 @@ function buildLogos(){
     put(g,24,10+T,'P');put(g,24,14+T,'P');
     put(g,26,10+T,'d');put(g,27,11+T,'d');put(g,27,12+T,'d');put(g,27,13+T,'d');put(g,26,14+T,'d');
     put(g,22,5,'pp');put(g,22,17,'pp');despeckle(g);return g;}
-  function trio(){const g=blank(72,32);paste(g,smallCow('scoop'),0,1);paste(g,smallCow('milk'),24,1);paste(g,smallCow('cone'),48,1);return g;}
-  function badge(){const D2=56,cx=28,cy=25,g=blank(D2,D2);const dist=(x,y)=>Math.hypot(x-cx,y-cy);
+  function trioFrom(cf){const c0=cf('scoop'),cw=c0[0].length,ch=c0.length,gap=2;const g=blank(cw*3+gap*2,ch+2);paste(g,cf('scoop'),0,1);paste(g,cf('milk'),cw+gap,1);paste(g,cf('cone'),2*(cw+gap),1);return g;}
+  function badgeOld(){const D2=46,cx=23,cy=22,g=blank(D2,D2);const dist=(x,y)=>Math.hypot(x-cx,y-cy);
+    for(let y=0;y<D2;y++)for(let x=0;x<D2;x++){const dd=dist(x,y);if(dd<=15.5)g[y][x]='c';if(dd>=17&&dd<=18.6)g[y][x]='d';if(dd>=15&&dd<=15.8)g[y][x]='L';}
+    paste(g,smallOld('milk'),12,7);rect(g,9,34,28,7,'d');put(g,8,36,'d');put(g,37,36,'d');rect(g,10,35,26,1,'L');pixText(g,16,37,'2021','c');despeckle(g);return g;}
+  function badgeNew(){const D2=56,cx=28,cy=25,g=blank(D2,D2);const dist=(x,y)=>Math.hypot(x-cx,y-cy);
     for(let y=0;y<D2;y++)for(let x=0;x<D2;x++){const dd=dist(x,y);if(dd<=19.5)g[y][x]='c';if(dd>=21&&dd<=22.8)g[y][x]='d';if(dd>=19&&dd<=19.8)g[y][x]='L';}
-    paste(g,smallCow('milk'),16,4);rect(g,12,42,32,7,'d');put(g,11,44,'d');put(g,44,44,'d');rect(g,13,43,30,1,'L');pixText(g,21,45,'2021','c');despeckle(g);return g;}
-  return {P, list:[
+    paste(g,smallNew('milk'),16,4);rect(g,12,42,32,7,'d');put(g,11,44,'d');put(g,44,44,'d');rect(g,13,43,30,1,'L');pixText(g,21,45,'2021','c');despeckle(g);return g;}
+  return {P, hero:S(heroCow()), main:[
     {key:'hero', name:'A. 히어로 소', note:'단일 히어로 마스코트 · 파비콘/앱아이콘·게임 마크', sp:S(heroCow())},
-    {key:'trio', name:'B. 트리오', note:'원본 3마리 재해석(콘·우유팩·아이스크림 모자) · 브랜드 인지 최강', sp:S(trio())},
-    {key:'badge', name:'C. 밀크씰 배지', note:'크림 씰 + 이중 네이비 링 + 히어로 소 + 2021 리본 · 프리미엄', sp:S(badge())},
+    {key:'trio', name:'B. 트리오', note:'원본 3마리 재해석(콘·우유팩·아이스크림 모자) · 이전(둥근 귀) 채택', sp:S(trioFrom(smallOld))},
+    {key:'badge', name:'C. 밀크씰 배지', note:'크림 씰 + 이중 네이비 링 + 소 + 2021 리본 · 이전(둥근 귀) 채택', sp:S(badgeOld())},
+  ], history:[
+    {group:'히어로 소 (A·D 계열)', items:[{label:'v1 정면(초안)',sp:S(heroV1())},{label:'v2 잎사귀(길어짐)',sp:S(heroV2())},{label:'v3 현재',sp:S(heroCow()),cur:true}]},
+    {group:'트리오 (B)', items:[{label:'v1 둥근 귀',sp:S(trioFrom(smallOld)),cur:true},{label:'v2 잎사귀 실험',sp:S(trioFrom(smallNew))}]},
+    {group:'밀크씰 배지 (C)', items:[{label:'v1 둥근 귀',sp:S(badgeOld()),cur:true},{label:'v2 잎사귀 실험',sp:S(badgeNew())}]},
   ]};
 }
 function drawSp(canvas,sp,pal,sc){const W=Math.max(...sp.map(r=>r.length)),H=sp.length;canvas.width=W*sc;canvas.height=H*sc;const x=canvas.getContext('2d');x.imageSmoothingEnabled=false;x.clearRect(0,0,canvas.width,canvas.height);for(let r=0;r<H;r++)for(let c=0;c<sp[r].length;c++){const col=pal[sp[r][c]];if(col){x.fillStyle=col;x.fillRect(c*sc,r*sc,sc,sc);}}}
@@ -372,32 +423,51 @@ function wordmarkCanvas(cv,pal,heroSp){
   x.fillStyle='#5a72aa';
   x.fillText('FRESH MILK · ICE CREAM', W/2, ch+40);
 }
-function renderRedesign(){
-  const {P,list}=buildLogos(); const el=$('rdgrid'); if(!el) return; el.innerHTML='';
-  list.forEach(item=>{
-    const card=document.createElement('div'); card.className='rdcard';
-    const cv=document.createElement('canvas'); cv.className='rdimg';
-    const sc = item.key==='trio'?5:6; drawSp(cv,item.sp,P,sc); cv.style.maxWidth='190px';
-    card.appendChild(cv);
-    const n=document.createElement('div'); n.className='rn'; n.textContent=item.name; card.appendChild(n);
-    const d=document.createElement('div'); d.className='rd'; d.textContent=item.note; card.appendChild(d);
-    const dl=document.createElement('div'); dl.className='dl';
-    const a1=document.createElement('a'); a1.textContent='1x ↓'; a1.onclick=()=>dlCanvas(item.sp,P,1,'saruru-logo-'+item.key+'-1x.png'); dl.appendChild(a1);
-    const a2=document.createElement('a'); a2.textContent='고해상 ↓'; a2.onclick=()=>dlCanvas(item.sp,P,12,'saruru-logo-'+item.key+'-12x.png'); dl.appendChild(a2);
-    card.appendChild(dl); el.appendChild(card);
-  });
-  // D. 워드마크 락업 (Galmuri 폰트) — 폰트 로드 후 렌더
-  const hero=list[0].sp;
+function mkLogoCard(item,P){
   const card=document.createElement('div'); card.className='rdcard';
-  const cv=document.createElement('canvas'); cv.className='rdimg'; cv.style.maxWidth='210px';
-  const paint=()=>wordmarkCanvas(cv,P,hero);
+  const cv=document.createElement('canvas'); cv.className='rdimg';
+  const sc = item.key==='trio'?5:6; drawSp(cv,item.sp,P,sc); cv.style.maxWidth='200px';
+  card.appendChild(cv);
+  const n=document.createElement('div'); n.className='rn'; n.textContent=item.name; card.appendChild(n);
+  const d=document.createElement('div'); d.className='rd'; d.textContent=item.note; card.appendChild(d);
+  const dl=document.createElement('div'); dl.className='dl';
+  const a1=document.createElement('a'); a1.textContent='1x ↓'; a1.onclick=()=>dlCanvas(item.sp,P,1,'saruru-logo-'+item.key+'-1x.png'); dl.appendChild(a1);
+  const a2=document.createElement('a'); a2.textContent='고해상 ↓'; a2.onclick=()=>dlCanvas(item.sp,P,12,'saruru-logo-'+item.key+'-12x.png'); dl.appendChild(a2);
+  card.appendChild(dl); return card;
+}
+function mkWordmarkCard(heroSp,P){
+  const card=document.createElement('div'); card.className='rdcard';
+  const cv=document.createElement('canvas'); cv.className='rdimg'; cv.style.maxWidth='220px';
+  const paint=()=>wordmarkCanvas(cv,P,heroSp);
   paint(); if(document.fonts&&document.fonts.ready){document.fonts.ready.then(paint);} setTimeout(paint,600);
   card.appendChild(cv);
   const n=document.createElement('div'); n.className='rn'; n.textContent='D. 워드마크 락업'; card.appendChild(n);
-  const d=document.createElement('div'); d.className='rd'; d.textContent='히어로 소 + 사르르목장(픽셀 한글 Galmuri) + 영문 서브 · 웹 헤더/명함'; card.appendChild(d);
+  const d=document.createElement('div'); d.className='rd'; d.textContent='히어로 소(A 계열) + 사르르목장(픽셀 한글 Galmuri) + 영문 서브 · 웹 헤더/명함'; card.appendChild(d);
   const dl=document.createElement('div'); dl.className='dl';
-  const a1=document.createElement('a'); a1.textContent='PNG ↓'; a1.onclick=()=>{const t=document.createElement('canvas');wordmarkCanvas(t,P,hero);const a=document.createElement('a');a.href=t.toDataURL('image/png');a.download='saruru-logo-wordmark.png';document.body.appendChild(a);a.click();a.remove();}; dl.appendChild(a1);
-  card.appendChild(dl); el.appendChild(card);
+  const a1=document.createElement('a'); a1.textContent='PNG ↓'; a1.onclick=()=>{const t=document.createElement('canvas');wordmarkCanvas(t,P,heroSp);const a=document.createElement('a');a.href=t.toDataURL('image/png');a.download='saruru-logo-wordmark.png';document.body.appendChild(a);a.click();a.remove();}; dl.appendChild(a1);
+  card.appendChild(dl); return card;
+}
+function renderRedesign(){
+  const R=buildLogos(); const P=R.P; const el=$('rdgrid'); if(!el) return; el.innerHTML='';
+  // 순서: A(히어로) → D(워드마크) → B(트리오) → C(배지)  [A·D 같은 계열]
+  el.appendChild(mkLogoCard(R.main[0],P));      // A
+  el.appendChild(mkWordmarkCard(R.hero,P));     // D
+  el.appendChild(mkLogoCard(R.main[1],P));      // B
+  el.appendChild(mkLogoCard(R.main[2],P));      // C
+  // 디자인 히스토리
+  const hist=$('rdhistory'); if(!hist) return; hist.innerHTML='';
+  R.history.forEach(gr=>{
+    const wrap=document.createElement('div'); wrap.className='histgroup';
+    const lb=document.createElement('div'); lb.className='hglabel'; lb.textContent=gr.group; wrap.appendChild(lb);
+    const row=document.createElement('div'); row.className='histrow';
+    gr.items.forEach(it=>{
+      const cell=document.createElement('div'); cell.className='histitem';
+      const cv=document.createElement('canvas'); const sc = it.sp.length>34?3:4; drawSp(cv,it.sp,P,sc); cell.appendChild(cv);
+      const hl=document.createElement('div'); hl.className='hl'+(it.cur?' cur':''); hl.textContent=(it.cur?'★ ':'')+it.label; cell.appendChild(hl);
+      row.appendChild(cell);
+    });
+    wrap.appendChild(row); hist.appendChild(wrap);
+  });
 }
 </script>
 </body>
