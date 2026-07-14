@@ -243,7 +243,7 @@ function renderApp(){
   <h2><span class="dot"></span>로고 픽셀 리디자인 시안 <span class="tag live">재해석 · v1</span></h2>
   <div class="card">
     <p class="cap">기계적 축소가 아니라 <b>브랜드에 맞게 예쁜 픽셀아트로 재해석</b> — 젖소 · 네이비 <code style="font-family:var(--mono)">#385088</code> · 우유 모티프로 <b>사르르목장 정체성</b> 유지. 인기 픽셀 마스코트 로고 학습 반영(치비 비율·큰 눈+글린트·볼터치·3톤 네이비). <b>여러 시안 → 피드백 받아 다듬는 전제(v1)</b>. 각 카드 다운로드 가능.</p>
-    <div class="subhead" style="margin-top:2px">✨ 소프트 셰이딩 리뉴얼 <span style="color:var(--brand)">신규</span> — Story of Seasons 풍 참고(스타일만), 우리 정체성 유지</div>
+    <div class="subhead" style="margin-top:2px">✨ 소프트 셰이딩 리뉴얼 <span style="color:var(--brand)">신규</span> — 유저 참고이미지(SoS anubiarts) 포즈·톤 정확 반영 · 엎드린 로프 소 + 토핑3종 · 우리 네이비 정체성 유지</div>
     <div id="rdrenew" class="rdgrid"></div>
     <div class="subhead" style="margin-top:22px">🎨 기존 시안 세트 (A·B·C·D)</div>
     <div class="rdgrid" id="rdgrid"></div>
@@ -403,56 +403,40 @@ function buildLogos(){
     for(let y=0;y<D2;y++)for(let x=0;x<D2;x++){const dd=dist(x,y);if(dd<=19.5)g[y][x]='c';if(dd>=21&&dd<=22.8)g[y][x]='d';if(dd>=19&&dd<=19.8)g[y][x]='L';}
     paste(g,smallNew('milk'),16,4);rect(g,12,42,32,7,'d');put(g,11,44,'d');put(g,44,44,'d');rect(g,13,43,30,1,'L');pixText(g,21,45,'2021','c');despeckle(g);return g;}
   // ── 소프트 셰이딩 리뉴얼 (Story of Seasons 풍) ──
-  function discShade(g,cx,cy,rx,ry,ramp,over){for(let r=0;r<g.length;r++)for(let c=0;c<g[0].length;c++){const dx=(c-cx)/rx,dy=(r-cy)/ry,d2=dx*dx+dy*dy;if(d2<=1){if(over&&g[r][c]!=='.'&&g[r][c]!==over)continue;const light=-(dx*0.62+dy*0.62);let v=light*0.5+0.5;if(d2>0.72)v-=0.34;if(d2>0.92)v-=0.18;let idx=Math.floor((1-v)*ramp.length);idx=Math.max(0,Math.min(ramp.length-1,idx));g[r][c]=ramp[idx];}}}
-  function outlineDir(g,fills,cx,cy){const H=g.length,W=g[0].length,src=g.map(r=>r.slice()),F=new Set(fills);for(let r=0;r<H;r++)for(let c=0;c<W;c++){if(src[r][c]==='.'){let adj=false;for(const dd of [[1,0],[-1,0],[0,1],[0,-1],[1,1],[1,-1],[-1,1],[-1,-1]])if(src[r+dd[0]]&&F.has(src[r+dd[0]][c+dd[1]]))adj=true;if(adj){const dirv=(c-cx)+(r-cy);g[r][c]=dirv>6?'X':dirv>-4?'D':'L';}}}}
-  const renewPal={'.':null,X:'#1c2748',D:'#26365e',d:'#385088',L:'#5a72aa',W:'#ffffff',e:'#eff4fc',s:'#d6e0f1',S:'#bcccea',N:'#3f5896',n:'#2a3d6e',c:'#fff6e6',y:'#f3e6c6',Y:'#e2cfa4',p:'#ffd9e2',P:'#f4a9b8',Q:'#e07d94',K:'#26365e',H:'#ffffff',t:'#f4d9a2',u:'#dcb873',r:'#c69a5a'};
-  function renewHero(){const g=blank(40,42);const HX=20,HY=23;
-    put(g,0,18,'cccc');put(g,1,17,'cccccc');
-    for(let r=2;r<10;r++)for(let c=16;c<24;c++)g[r][c]='c';
-    for(let r=2;r<10;r++){g[r][16]='W';g[r][17]='W';g[r][22]='y';g[r][23]='Y';}
-    for(let c=18;c<22;c++){g[4][c]='L';g[5][c]='L';g[6][c]='L';}
-    discShade(g,7,16,3.4,4,['W','e','s','S']);discShade(g,33,17,2.8,3.4,['W','e','s','S']);
-    discShade(g,HX,HY,13,12,['W','W','e','e','s','s','S']);
-    discShade(g,26,17,3.3,2.7,['N','N','n']);discShade(g,10,27,2.5,1.9,['N','N','n']);
-    discShade(g,20,30,5.5,3.4,['p','P','P','Q']);
-    outlineDir(g,['W','e','s','S','c','y','Y','L','N','n','p','P','Q'],HX,HY);
-    disc(g,15,23,1.8,2.4,'K');disc(g,25,23,1.7,2.2,'K');
-    put(g,21,14,'H');put(g,21,24,'H');put(g,24,15,'L');put(g,24,25,'L');
-    put(g,29,18,'Q');put(g,29,22,'Q');
-    put(g,32,17,'Q');put(g,33,18,'Q');put(g,33,19,'Q');put(g,33,20,'Q');put(g,33,21,'Q');put(g,32,22,'Q');
-    disc(g,10,30,1.9,1.4,'P');disc(g,30,30,1.9,1.4,'P');
-    despeckle(g);return g;}
-  // ── 전신 소 + 머리 토핑 3종 ──
-  const _BODY=['W','W','e','e','s','s','S'],_EAR=['W','e','s','S'],_PINK=['p','P','P','Q'],_NAVY=['N','N','n'];
+  // 소프트 셰이딩(광원 위쪽) + 방향성 아웃라인(2톤) — 레퍼런스(SoS anubiarts) 기반
+  function discShade(g,cx,cy,rx,ry,ramp,over){for(let r=0;r<g.length;r++)for(let c=0;c<g[0].length;c++){const dx=(c-cx)/rx,dy=(r-cy)/ry,d2=dx*dx+dy*dy;if(d2<=1){if(over&&g[r][c]!=='.'&&g[r][c]!==over)continue;const light=-(dx*0.4+dy*0.72);let v=light*0.5+0.5;if(d2>0.7)v-=0.3;if(d2>0.9)v-=0.16;let idx=Math.floor((1-v)*ramp.length);idx=Math.max(0,Math.min(ramp.length-1,idx));g[r][c]=ramp[idx];}}}
+  function outlineDir(g,fills,cx,cy){const H=g.length,W=g[0].length,src=g.map(r=>r.slice()),F=new Set(fills);for(let r=0;r<H;r++)for(let c=0;c<W;c++){if(src[r][c]==='.'){let adj=false;for(const dd of [[1,0],[-1,0],[0,1],[0,-1],[1,1],[1,-1],[-1,1],[-1,-1]])if(src[r+dd[0]]&&F.has(src[r+dd[0]][c+dd[1]]))adj=true;if(adj){const dirv=(c-cx)+(r-cy);g[r][c]=dirv>7?'X':'D';}}}}
+  const renewPal={'.':null,W:'#fffdf3',e:'#f7f0da',s:'#ece0c2',S:'#dccdaa',N:'#465f9e',n:'#334676',X:'#3a3350',D:'#4a4064',p:'#ffd6e0',P:'#f5aec0',Q:'#e58aa0',m:'#f8c2d0',K:'#3a3350',c:'#fffdf3',y:'#f0e6cc',Y:'#ddccaa',t:'#f4d9a2',u:'#dcb873',L:'#6a80c0',H:'#ffffff',R:'#6a80c0'};
+  const _CREAM=['W','W','e','e','s','s','S'],_NAVY=['N','N','n'],_PINK=['p','P','P','Q'];
   function topping(g,kind,cx){
     if(kind==='milk'){put(g,0,cx-2,'cccc');put(g,1,cx-3,'cccccc');
-      for(let r=2;r<11;r++)for(let c=cx-4;c<cx+4;c++)g[r][c]='c';
-      for(let r=2;r<11;r++){g[r][cx-4]='W';g[r][cx-3]='W';g[r][cx+2]='y';g[r][cx+3]='Y';}
-      for(let c=cx-2;c<cx+2;c++){g[5][c]='L';g[6][c]='L';g[7][c]='L';}
-    } else if(kind==='cone'){discShade(g,cx,4,4,3.6,['W','W','e','e','s']);put(g,0,cx-1,'WW');
-      for(let r=8;r<13;r++){const w=Math.max(1,12-r);for(let c=cx-w;c<=cx+w;c++)g[r][c]=((c-cx+r)%3===0)?'u':'t';}
-    } else {discShade(g,cx,4,4.4,4,['W','c','c','y','Y']);put(g,1,cx-2,'WW');}
+      for(let r=2;r<10;r++)for(let c=cx-4;c<cx+4;c++)g[r][c]='c';
+      for(let r=2;r<10;r++){g[r][cx-4]='W';g[r][cx+3]='Y';}
+      for(let c=cx-2;c<cx+2;c++){g[4][c]='L';g[5][c]='L';}
+    } else if(kind==='cone'){discShade(g,cx,3,3.4,3,['W','W','e','s']);put(g,0,cx-1,'WW');
+      for(let r=7;r<11;r++){const w=Math.max(1,10-r);for(let c=cx-w;c<=cx+w;c++)g[r][c]=((c-cx+r)%3===0)?'u':'t';}
+    } else {discShade(g,cx,3,3.8,3.4,['W','c','c','y','Y']);put(g,1,cx-2,'WW');}
   }
-  const _LEGS=[[14,16],[19,21],[25,27],[30,32]];
-  function renewCow(kind){const g=blank(46,58);const HX=23,HY=24;
-    discShade(g,23,42,11.5,7.5,_BODY);
-    for(const [a,b] of _LEGS){for(let r=47;r<53;r++)for(let c=a;c<=b;c++){g[r][c]=(c===b)?'s':(c===a?'e':'W');}}
-    discShade(g,HX,HY,13,12,_BODY);
-    discShade(g,10,17,3.4,4,_EAR);discShade(g,36,18,2.8,3.4,_EAR);
-    topping(g,kind,HX);
-    discShade(g,29,18,3.3,2.7,_NAVY);discShade(g,13,28,2.5,1.9,_NAVY);
-    discShade(g,16,41,3,2.4,_NAVY);discShade(g,31,46,2.4,1.9,_NAVY);
-    discShade(g,23,31,5.5,3.4,_PINK);
-    for(const [a,b] of _LEGS){for(let c=a;c<=b;c++){g[52][c]='D';if(g[51][c]==='.')g[51][c]='D';}}
-    outlineDir(g,['W','e','s','S','c','y','Y','L','N','n','p','P','Q','t','u'],HX,32);
-    disc(g,18,24,1.8,2.4,'K');disc(g,28,24,1.7,2.2,'K');
-    put(g,23,17,'H');put(g,23,27,'H');put(g,26,18,'L');put(g,26,28,'L');
-    put(g,30,21,'Q');put(g,30,25,'Q');
-    put(g,33,20,'Q');put(g,34,21,'Q');put(g,34,22,'Q');put(g,34,23,'Q');put(g,34,24,'Q');put(g,33,25,'Q');
-    disc(g,13,31,1.9,1.4,'P');disc(g,33,31,1.9,1.4,'P');
+  // 엎드린 로프 소(측면·머리 좌측) — 레퍼런스 포즈
+  function renewCow(kind){const g=blank(52,36);
+    discShade(g,30,21,20,12,_CREAM);
+    discShade(g,14,17,11.5,10.5,_CREAM);
+    discShade(g,7,8,2.6,3.2,_CREAM);discShade(g,20,7,2.4,3,_CREAM);
+    put(g,4,12,'W');put(g,3,12,'e');put(g,4,17,'W');put(g,3,17,'e');
+    topping(g,kind,14);
+    discShade(g,8,11,3,3.4,_NAVY);discShade(g,40,15,6,6.5,_NAVY);
+    put(g,8,6,'P');put(g,9,6,'p');
+    discShade(g,13,25,7,4,_PINK);
+    put(g,33,10,'W');put(g,33,11,'e');put(g,32,10,'S');
+    put(g,33,17,'W');put(g,33,18,'e');put(g,32,17,'S');
+    outlineDir(g,['W','e','s','S','c','y','Y','L','N','n','p','P','Q','t','u'],20,20);
+    for(let r=13;r<17;r++){g[r][11]='K';g[r][12]='K';}
+    for(let r=13;r<17;r++){g[r][17]='K';g[r][18]='K';}
+    disc(g,8,19,1.8,1.4,'P');disc(g,21,19,1.8,1.4,'P');
+    put(g,23,11,'Q');put(g,23,15,'Q');
     despeckle(g);return g;}
-  return {P, hero:S(heroCow()), renew:{sp:S(renewHero()), pal:renewPal,
-    full:[{key:'milk',name:'전신 소 · 우유팩',sp:S(renewCow('milk'))},{key:'cone',name:'전신 소 · 소프트콘',sp:S(renewCow('cone'))},{key:'scoop',name:'전신 소 · 스쿱',sp:S(renewCow('scoop'))}]}, main:[
+  return {P, hero:S(heroCow()), renew:{pal:renewPal,
+    full:[{key:'milk',name:'로프 소 · 우유팩',sp:S(renewCow('milk'))},{key:'cone',name:'로프 소 · 소프트콘',sp:S(renewCow('cone'))},{key:'scoop',name:'로프 소 · 스쿱',sp:S(renewCow('scoop'))}]}, main:[
     {key:'hero', name:'A. 히어로 소', note:'단일 히어로 마스코트 · 파비콘/앱아이콘·게임 마크', sp:S(heroCow())},
     {key:'trio', name:'B. 트리오', note:'원본 3마리 재해석(콘·우유팩·아이스크림 모자) · 이전(둥근 귀) 채택', sp:S(trioFrom(smallOld))},
     {key:'badge', name:'C. 밀크씰 배지', note:'크림 씰 + 이중 네이비 링 + 소 + 2021 리본 · 이전(둥근 귀) 채택', sp:S(badgeOld())},
@@ -540,10 +524,8 @@ function renderRedesign(){
       const a2=document.createElement('a'); a2.textContent='고해상 ↓'; a2.onclick=()=>dlCanvas(sp,rp,12,fn+'-12x.png'); dl.appendChild(a2);
       card.appendChild(dl); return card;
     };
-    // 얼굴 마크(파비콘/앱아이콘)
-    rn.appendChild(mk(R.renew.sp,'얼굴 마크 · 소프트 셰이딩','부드러운 명암·방향성 아웃라인 · 파비콘/앱아이콘용','saruru-logo-face',7));
-    // 전신 소 + 토핑 3종
-    R.renew.full.forEach(f=>rn.appendChild(mk(f.sp,f.name,'전신 마스코트 · 머리 토핑('+({milk:'우유팩',cone:'소프트콘',scoop:'스쿱'})[f.key]+') · 굿즈/스티커','saruru-logo-full-'+f.key,6)));
+    // 엎드린 로프 소 + 토핑 3종 (레퍼런스 SoS 포즈 정확 반영)
+    R.renew.full.forEach(f=>rn.appendChild(mk(f.sp,f.name,'엎드린 로프 마스코트 · 머리 토핑('+({milk:'우유팩',cone:'소프트콘',scoop:'스쿱'})[f.key]+') · 크림 소프트셰이딩·네이비 얼룩','saruru-logo-loaf-'+f.key,7)));
   }
   // 순서: A(히어로) → B(트리오) → C(배지) → D(워드마크)
   el.appendChild(mkLogoCard(R.main[0],P));      // A
