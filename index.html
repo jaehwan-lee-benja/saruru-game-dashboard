@@ -404,9 +404,27 @@ function buildLogos(){
     paste(g,smallNew('milk'),16,4);rect(g,12,42,32,7,'d');put(g,11,44,'d');put(g,44,44,'d');rect(g,13,43,30,1,'L');pixText(g,21,45,'2021','c');despeckle(g);return g;}
   // ── 소프트 셰이딩 리뉴얼 (Story of Seasons 풍) ──
   // 소프트 셰이딩(광원 위쪽) + 방향성 아웃라인(2톤) — 레퍼런스(SoS anubiarts) 기반
-  function discShade(g,cx,cy,rx,ry,ramp,over){for(let r=0;r<g.length;r++)for(let c=0;c<g[0].length;c++){const dx=(c-cx)/rx,dy=(r-cy)/ry,d2=dx*dx+dy*dy;if(d2<=1){if(over&&g[r][c]!=='.'&&g[r][c]!==over)continue;const light=-(dx*0.4+dy*0.72);let v=light*0.5+0.5;if(d2>0.7)v-=0.3;if(d2>0.9)v-=0.16;let idx=Math.floor((1-v)*ramp.length);idx=Math.max(0,Math.min(ramp.length-1,idx));g[r][c]=ramp[idx];}}}
-  function outlineDir(g,fills,cx,cy){const H=g.length,W=g[0].length,src=g.map(r=>r.slice()),F=new Set(fills);for(let r=0;r<H;r++)for(let c=0;c<W;c++){if(src[r][c]==='.'){let adj=false;for(const dd of [[1,0],[-1,0],[0,1],[0,-1],[1,1],[1,-1],[-1,1],[-1,-1]])if(src[r+dd[0]]&&F.has(src[r+dd[0]][c+dd[1]]))adj=true;if(adj){const dirv=(c-cx)+(r-cy);g[r][c]=dirv>7?'X':'D';}}}}
+  function discShade(g,cx,cy,rx,ry,ramp,over,lx,ly){const LX=(lx===undefined?0.4:lx),LY=(ly===undefined?0.72:ly);for(let r=0;r<g.length;r++)for(let c=0;c<g[0].length;c++){const dx=(c-cx)/rx,dy=(r-cy)/ry,d2=dx*dx+dy*dy;if(d2<=1){if(over&&g[r][c]!=='.'&&g[r][c]!==over)continue;const light=-(dx*LX+dy*LY);let v=light*0.5+0.5;if(d2>0.7)v-=0.3;if(d2>0.9)v-=0.16;let idx=Math.floor((1-v)*ramp.length);idx=Math.max(0,Math.min(ramp.length-1,idx));g[r][c]=ramp[idx];}}}
+  function outlineDir(g,fills,cx,cy,tri){const H=g.length,W=g[0].length,src=g.map(r=>r.slice()),F=new Set(fills);for(let r=0;r<H;r++)for(let c=0;c<W;c++){if(src[r][c]==='.'){let adj=false;for(const dd of [[1,0],[-1,0],[0,1],[0,-1],[1,1],[1,-1],[-1,1],[-1,-1]])if(src[r+dd[0]]&&F.has(src[r+dd[0]][c+dd[1]]))adj=true;if(adj){const dirv=(c-cx)+(r-cy);g[r][c]=tri?(dirv>6?'X':dirv>-4?'D':'L'):(dirv>7?'X':'D');}}}}
   const renewPal={'.':null,W:'#fffdf3',e:'#f7f0da',s:'#ece0c2',S:'#dccdaa',N:'#465f9e',n:'#334676',X:'#3a3350',D:'#4a4064',p:'#ffd6e0',P:'#f5aec0',Q:'#e58aa0',m:'#f8c2d0',K:'#3a3350',c:'#fffdf3',y:'#f0e6cc',Y:'#ddccaa',t:'#f4d9a2',u:'#dcb873',L:'#6a80c0',H:'#ffffff',R:'#6a80c0'};
+  // 이전 정면 얼굴 마크(흰 몸통 소프트) — 복원
+  const facePal={'.':null,X:'#1c2748',D:'#26365e',d:'#385088',L:'#5a72aa',W:'#ffffff',e:'#eff4fc',s:'#d6e0f1',S:'#bcccea',N:'#3f5896',n:'#2a3d6e',c:'#fff6e6',y:'#f3e6c6',Y:'#e2cfa4',p:'#ffd9e2',P:'#f4a9b8',Q:'#e07d94',K:'#26365e',H:'#ffffff'};
+  function renewHero(){const g=blank(40,42);const HX=20,HY=23;
+    put(g,0,18,'cccc');put(g,1,17,'cccccc');
+    for(let r=2;r<10;r++)for(let c=16;c<24;c++)g[r][c]='c';
+    for(let r=2;r<10;r++){g[r][16]='W';g[r][17]='W';g[r][22]='y';g[r][23]='Y';}
+    for(let c=18;c<22;c++){g[4][c]='L';g[5][c]='L';g[6][c]='L';}
+    discShade(g,7,16,3.4,4,['W','e','s','S'],null,0.62,0.62);discShade(g,33,17,2.8,3.4,['W','e','s','S'],null,0.62,0.62);
+    discShade(g,HX,HY,13,12,['W','W','e','e','s','s','S'],null,0.62,0.62);
+    discShade(g,26,17,3.3,2.7,['N','N','n'],null,0.62,0.62);discShade(g,10,27,2.5,1.9,['N','N','n'],null,0.62,0.62);
+    discShade(g,20,30,5.5,3.4,['p','P','P','Q'],null,0.62,0.62);
+    outlineDir(g,['W','e','s','S','c','y','Y','L','N','n','p','P','Q'],HX,HY,true);
+    disc(g,15,23,1.8,2.4,'K');disc(g,25,23,1.7,2.2,'K');
+    put(g,21,14,'H');put(g,21,24,'H');put(g,24,15,'L');put(g,24,25,'L');
+    put(g,29,18,'Q');put(g,29,22,'Q');
+    put(g,32,17,'Q');put(g,33,18,'Q');put(g,33,19,'Q');put(g,33,20,'Q');put(g,33,21,'Q');put(g,32,22,'Q');
+    disc(g,10,30,1.9,1.4,'P');disc(g,30,30,1.9,1.4,'P');
+    despeckle(g);return g;}
   const _CREAM=['W','W','e','e','s','s','S'],_NAVY=['N','N','n'],_PINK=['p','P','P','Q'];
   function topping(g,kind,cx){
     if(kind==='milk'){put(g,0,cx-2,'cccc');put(g,1,cx-3,'cccccc');
@@ -435,7 +453,7 @@ function buildLogos(){
     disc(g,8,19,1.8,1.4,'P');disc(g,21,19,1.8,1.4,'P');
     put(g,23,11,'Q');put(g,23,15,'Q');
     despeckle(g);return g;}
-  return {P, hero:S(heroCow()), renew:{pal:renewPal,
+  return {P, hero:S(heroCow()), renew:{pal:renewPal, face:{sp:S(renewHero()), pal:facePal},
     full:[{key:'milk',name:'로프 소 · 우유팩',sp:S(renewCow('milk'))},{key:'cone',name:'로프 소 · 소프트콘',sp:S(renewCow('cone'))},{key:'scoop',name:'로프 소 · 스쿱',sp:S(renewCow('scoop'))}]}, main:[
     {key:'hero', name:'A. 히어로 소', note:'단일 히어로 마스코트 · 파비콘/앱아이콘·게임 마크', sp:S(heroCow())},
     {key:'trio', name:'B. 트리오', note:'원본 3마리 재해석(콘·우유팩·아이스크림 모자) · 이전(둥근 귀) 채택', sp:S(trioFrom(smallOld))},
@@ -524,6 +542,17 @@ function renderRedesign(){
       const a2=document.createElement('a'); a2.textContent='고해상 ↓'; a2.onclick=()=>dlCanvas(sp,rp,12,fn+'-12x.png'); dl.appendChild(a2);
       card.appendChild(dl); return card;
     };
+    // 얼굴 마크(정면·흰 몸통 소프트) — 복원. 자체 팔레트
+    if(R.renew.face){const fp=R.renew.face.pal,fsp=R.renew.face.sp;
+      const card=document.createElement('div'); card.className='rdcard'; card.style.maxWidth='210px';
+      const cv=document.createElement('canvas'); cv.className='rdimg'; drawSp(cv,fsp,fp,7); cv.style.maxWidth='150px'; card.appendChild(cv);
+      const n=document.createElement('div'); n.className='rn'; n.textContent='얼굴 마크 · 소프트 셰이딩'; card.appendChild(n);
+      const d=document.createElement('div'); d.className='rd'; d.textContent='정면 얼굴(흰 몸통 소프트) · 파비콘/앱아이콘용'; card.appendChild(d);
+      const dl=document.createElement('div'); dl.className='dl';
+      const a1=document.createElement('a'); a1.textContent='1x ↓'; a1.onclick=()=>dlCanvas(fsp,fp,1,'saruru-logo-face-1x.png'); dl.appendChild(a1);
+      const a2=document.createElement('a'); a2.textContent='고해상 ↓'; a2.onclick=()=>dlCanvas(fsp,fp,12,'saruru-logo-face-12x.png'); dl.appendChild(a2);
+      card.appendChild(dl); rn.appendChild(card);
+    }
     // 엎드린 로프 소 + 토핑 3종 (레퍼런스 SoS 포즈 정확 반영)
     R.renew.full.forEach(f=>rn.appendChild(mk(f.sp,f.name,'엎드린 로프 마스코트 · 머리 토핑('+({milk:'우유팩',cone:'소프트콘',scoop:'스쿱'})[f.key]+') · 크림 소프트셰이딩·네이비 얼룩','saruru-logo-loaf-'+f.key,7)));
   }
