@@ -245,7 +245,7 @@ function renderApp(){
     <p class="cap">기계적 축소가 아니라 <b>브랜드에 맞게 예쁜 픽셀아트로 재해석</b> — 젖소 · 네이비 <code style="font-family:var(--mono)">#385088</code> · 우유 모티프로 <b>사르르목장 정체성</b> 유지. 인기 픽셀 마스코트 로고 학습 반영(치비 비율·큰 눈+글린트·볼터치·3톤 네이비). <b>여러 시안 → 피드백 받아 다듬는 전제(v1)</b>. 각 카드 다운로드 가능.</p>
     <div class="subhead" style="margin-top:2px">✨ 소프트 셰이딩 리뉴얼 <span style="color:var(--brand)">신규</span> — 유저 참고이미지(SoS anubiarts) 포즈·톤 정확 반영 · 엎드린 로프 소 + 토핑3종 · 우리 네이비 정체성 유지</div>
     <div id="rdrenew" class="rdgrid"></div>
-    <div class="subhead" style="margin-top:20px">🐮 사르르목장 BI 마스코트 <span style="color:var(--brand)">최우선</span> — <b>3/4 앵글(30° 측면) 얼굴</b> + 엉덩이 오른쪽위→내려오는 작은 치비 몸(다리 없음·볼륨 셰이딩) · 토핑3종</div>
+    <div class="subhead" style="margin-top:20px">🐮 사르르목장 BI 마스코트 <span style="color:var(--brand)">최우선</span> — <b>정면 얼굴 + 간결한 몸 + 오른쪽 엉덩이 아래로 내려옴(레퍼런스 참고)</b> · 다리 없음·볼륨 셰이딩 · 토핑3종</div>
     <div id="rdbody" class="rdgrid"></div>
     <div id="rdstudy" style="margin-top:22px;border:2px dashed #c9524e;border-radius:12px;padding:14px 16px;background:rgba(201,82,78,.06)">
       <div style="font-weight:800;color:#c9524e;font-size:13px">⚠ 습작·비교용 — 브랜드 자산 아님 (저작권)</div>
@@ -534,6 +534,20 @@ function buildLogos(){
     outlineDir(g,['W','e','s','S','c','y','Y','L','N','n','p','P','Q','t','u'],22,24,true);
     drawFaceDet34(g,ox,oy);
     despeckle(g);return g;}
+  // 정면 얼굴 + 간결한 몸 + 엉덩이 아래로 내려옴(레퍼런스 참고) · 다리 없음
+  function frontConcise(kind){const g=blank(52,44); const ox=1,oy=0;
+    const bm=nmask();
+    mBlob(bm,31,28,10,9);mBlob(bm,38,26,9,9);mBlob(bm,44,30,8,10);
+    shadeForm(g,bm,37,28,14,11,_CREAM,0.42,0.66,0.35);
+    const nm=nmask();
+    mBlob(nm,44,25,5,5);mBlob(nm,46,31,4,6);mBlob(nm,41,24,3,3);
+    for(let r=0;r<g.length;r++)for(let c=0;c<g[0].length;c++)if(nm[r][c]&&!bm[r][c])nm[r][c]=0;
+    shadeForm(g,nm,45,28,7,9,_NAVY,0.42,0.66,0.25);
+    drawHead(g,ox,oy);
+    if(kind&&kind!=='none')topping(g,kind,20+ox);
+    outlineDir(g,['W','e','s','S','c','y','Y','L','N','n','p','P','Q','t','u'],24,26,true);
+    drawFaceDet(g,ox,oy);
+    despeckle(g);return g;}
   // 얼굴 유지 + 몸통 1/3 축소 + 다리 없음 (치비 BI · 정면)
   function organicMini(kind){const g=blank(54,44); const ox=1,oy=0;
     const bm=nmask();
@@ -552,7 +566,7 @@ function buildLogos(){
   const studyPal={'.':null,X:'#1b2036',W:'#ffffff',e:'#e9f0fb',s:'#c6d3ef',N:'#3f5896',n:'#2b3d6b',K:'#253559',p:'#ffdbe4',P:'#f4a9bb',Q:'#e07d97',L:'#9fb0d8'};
   function refStudy(){return [".............XLLLLLX...XXXXXXXXX............................",".....XXXXXXXXXLLLLLX...XeeeeeeeX............................",".....XeeeeeeXXLLLLLX...XeeeeeeeX............................",".....XeeeeeeXXLLLLLXXXXXeeeeeeeX............................",".....XPPPeeeXXXXXXXeeeeeeeeeeeeXXXXXXXXXXXXXXX..............",".....XPPPeeeXeNNNNNNNNNeeeeeeeeeeeeeeeeeeeeeeXXXXXXX........",".....XPPPeeeNNNNNNNNNNNNNeeeeeeeeeeeeeeeeeeeeeeeeeeXXXX.....",".....XXWWNNNNNNNNNNNNNNNNeeeeeeeeeeeeeeeeeeeeeeeeeeeeeXXX...","....XXWWNNNNNNNNNNNNNNNNeeeeeeeeeeeeeeeeeNNNNNNNNNNNNeeeXX..","...XXeWWNNNNNNNNNNNNNNNeeeeeeeeeeeeeeeeNNNNNNNNNNNNNNNNNeXX.","...XeeWWWNNNNNNNNKKNNeeeeeKKeeeePPeeeeNNNNNNNNNNNNNNNNNNNeX.","..XXeeWWWWNNNNNNNKKeeeeeeeKKeeeePPeeeNNNNNNNNNNNNNNNNNNNNeX.","..XeeeWWWWWWNNNNNKKWeeeeeeKKeeeeeeeeeNNNNNNNNNNNNNNNNNNNNeX.","..XeeeWWWWWWWWWWWKKWWeeeeeKKeeeeeeeeeNNNNNNNNNNNNNNNNNNNeeX.",".XXeeeWWWWWWWWWWWKKWWWeeeeKKeeeeeeeeeeNNNNNNNNNNNNNNNNNNeeX.",".XeeeeWWWWWWWWWWWKKWWWeeeeKKeeeeeeeeeeNNNNNNNNNNNNNNNNNeeeX.",".XeeeeeeeeeeeeeeeKKeeeeeeeKKeeeeeeeeeeeNNNNNNNNNNNNNNNNeeeX.","XXePPPPPPPPPPPPPPPPPPPPPPPPPPPeeeeeeeeeeNNNNNNNNNNNNNNeeeeX.","XePPppppppppppPPPPPPPPPPPPPPPPPeeeeeeeeeeNNNNNNNNNNNNeeeeeX.","XPPPppppppppppPPPPPPPPPPPPPPPPPPeeeeeeeeeennnnnnnnnneeeeeeX.","XPPPPPPPQQQQPPPPPPPPPPQQQQPPPPPPeeeeeeeeessnnnnnnnnsssseeXX.","XXPPPPPPQQQQPPPPPPPPPPQQQQPPPPPPeeeeeeeessssnnnnnnssssseeX..",".XPPPPPPQQQQPPPPPPPPPPQQQQPPPPPeeeeeeeessssssnnnnsssssseeX..",".XXPPPPPPPPPPPPPPPPPPPPPPPPPPPeeeeeeeessssssssssssssssseXX..","..XePPPPPPPPPPPPPPPPPPPPPPPPPeeeeeeeesssssssssssssssssseX...","..XXePPPPPPPPPPPPPPPPPPPPPPPeeeeeeeesssssssssssssssssssXX...","...XXXePPPPPPPPPPPPPPPPPPPeeeeeeeeesssssssssssssssssssXX....",".....XXXePPPPPPPPPPPPPPPeeeeeeeeeesssssssssssssssssssXX.....",".......XXXXePPPPPPPPPPeeeeeeeeeeessssssssssssssssssXXX......","..........XXXXXeeeeeeeeeeeeeeeeessssssssssssssssXXXX........",".............XeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeXXXXX...........",".............XeeeeeXXXeeeeeXXXeeeeeXXXXXXXXXX...............",".............XeeeeeX.XeeeeeX.XeeeeeX........................",".............XeeeeeX.XeeeeeX.XeeeeeX........................",".............XXXXXXX.XXXXXXX.XXXXXXX........................"];}
   return {P, hero:S(heroCow()), renew:{pal:renewPal, study:refStudy(), studyPal:studyPal,
-    face:{pal:facePal, variants:[{key:'milk',sp:S(faceMark('milk'))},{key:'cone',sp:S(faceMark('cone'))},{key:'scoop',sp:S(faceMark('scoop'))}], headSp:S(faceMark('none')), hats:{milk:S(hatSprite('milk')),cone:S(hatSprite('cone')),scoop:S(hatSprite('scoop'))}, bodies:[{key:'milk',sp:S(chibi34('milk'))},{key:'cone',sp:S(chibi34('cone'))},{key:'scoop',sp:S(chibi34('scoop'))}]},
+    face:{pal:facePal, variants:[{key:'milk',sp:S(faceMark('milk'))},{key:'cone',sp:S(faceMark('cone'))},{key:'scoop',sp:S(faceMark('scoop'))}], headSp:S(faceMark('none')), hats:{milk:S(hatSprite('milk')),cone:S(hatSprite('cone')),scoop:S(hatSprite('scoop'))}, bodies:[{key:'milk',sp:S(frontConcise('milk'))},{key:'cone',sp:S(frontConcise('cone'))},{key:'scoop',sp:S(frontConcise('scoop'))}]},
     full:[{key:'milk',name:'로프 소 · 우유팩',sp:S(renewCow('milk'))},{key:'cone',name:'로프 소 · 소프트콘',sp:S(renewCow('cone'))},{key:'scoop',name:'로프 소 · 스쿱',sp:S(renewCow('scoop'))}]}, main:[
     {key:'hero', name:'A. 히어로 소', note:'단일 히어로 마스코트 · 파비콘/앱아이콘·게임 마크', sp:S(heroCow())},
     {key:'trio', name:'B. 트리오', note:'원본 3마리 재해석(콘·우유팩·아이스크림 모자) · 이전(둥근 귀) 채택', sp:S(trioFrom(smallOld))},
@@ -671,7 +685,7 @@ function renderRedesign(){
     R.renew.full.forEach(f=>rn.appendChild(mkCard(f.sp,rp,f.name,'엎드린 로프 마스코트 · 토핑('+HN[f.key]+') · 크림 소프트셰이딩·네이비 얼룩','saruru-logo-loaf-'+f.key,7)));
     // 정면 전신 소 3종 — facePal(흰 몸통, 얼굴 마크와 동일)
     const rb=$('rdbody'); if(rb && R.renew.face.bodies){ rb.innerHTML='';
-      R.renew.face.bodies.forEach(b=>rb.appendChild(mkCard(b.sp,fp,'BI 마스코트 · '+HN[b.key],'3/4 앵글(30°) 얼굴 + 엉덩이 우상→내려오는 치비 몸(다리 없음·볼륨 셰이딩) · 사르르목장 BI·굿즈/캐릭터','saruru-BI-cow-'+b.key,6)));
+      R.renew.face.bodies.forEach(b=>rb.appendChild(mkCard(b.sp,fp,'BI 마스코트 · '+HN[b.key],'정면 얼굴 + 간결한 몸 + 오른쪽 엉덩이 아래로 내려옴(레퍼런스) · 다리 없음·볼륨 셰이딩 · 사르르목장 BI','saruru-BI-cow-'+b.key,6)));
     }
     // ⚠ 습작·비교용 (브랜드 사용 불가)
     const rs=$('rdstudygrid'); if(rs && R.renew.study){ rs.innerHTML='';
