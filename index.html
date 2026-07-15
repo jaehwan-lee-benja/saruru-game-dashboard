@@ -243,24 +243,30 @@ function renderApp(){
   <h2><span class="dot"></span>로고 픽셀 리디자인 시안 <span class="tag live">재해석 · v1</span></h2>
   <div class="card">
     <p class="cap">기계적 축소가 아니라 <b>브랜드에 맞게 예쁜 픽셀아트로 재해석</b> — 젖소 · 네이비 <code style="font-family:var(--mono)">#385088</code> · 우유 모티프로 <b>사르르목장 정체성</b> 유지. 인기 픽셀 마스코트 로고 학습 반영(치비 비율·큰 눈+글린트·볼터치·3톤 네이비). <b>여러 시안 → 피드백 받아 다듬는 전제(v1)</b>. 각 카드 다운로드 가능.</p>
-    <div class="subhead" style="margin-top:2px">✨ 소프트 셰이딩 리뉴얼 <span style="color:var(--brand)">신규</span> — 유저 참고이미지(SoS anubiarts) 포즈·톤 정확 반영 · 엎드린 로프 소 + 토핑3종 · 우리 네이비 정체성 유지</div>
-    <div id="rdrenew" class="rdgrid"></div>
-    <div class="subhead" style="margin-top:20px">🐮 사르르목장 BI 마스코트 <span style="color:var(--brand)">최우선</span> — <b>정면 얼굴 + 간결한 몸 + 오른쪽 엉덩이 아래로 내려옴(레퍼런스 참고)</b> · 다리 없음·볼륨 셰이딩 · 토핑3종</div>
-    <div id="rdbody" class="rdgrid"></div>
-    <div id="rdstudy" style="margin-top:22px;border:2px dashed #c9524e;border-radius:12px;padding:14px 16px;background:rgba(201,82,78,.06)">
-      <div style="font-weight:800;color:#c9524e;font-size:13px">⚠ 습작·비교용 — 브랜드 자산 아님 (저작권)</div>
-      <div class="subhead" style="margin-top:4px">레퍼런스(SoS · anubiarts)를 <b>픽셀 하나씩 손으로 찍어(타원 primitive 아님) 윤곽·얼룩·얼굴을 재현하고 색만 우리 네이비 팔레트</b>로 바꾼 스터디. 원작 형태를 그대로 따르므로 <b>저작권상 게임/굿즈 등 브랜드 용도로는 사용하지 않음</b> — 오직 대표님과 방향 비교·학습용.</div>
-      <div class="rdgrid" id="rdstudygrid" style="margin-top:10px"></div>
-    </div>
-    <div id="rddotbox" style="margin-top:16px;border:2px dashed #b08900;border-radius:12px;padding:14px 16px;background:rgba(176,137,0,.06)">
-      <div style="font-weight:800;color:#b08900;font-size:13px">🧪 손 도트맵 시도 — 타원 없이 레퍼런스 윤곽 픽셀 트레이스 (정직한 진행 상황)</div>
-      <div class="subhead" style="margin-top:4px"><b>방식은 작동</b>: 몸통을 타원(ellipse)이 아니라 <b>레퍼런스 윤곽을 픽셀좌표로 따서 스프라이트 배열(도트맵)</b>로 손 배치. 다만 <b>새 브랜드 마스코트를 손 도트로 그리면 아직 아마추어 마감</b>(비율·귀여움이 디스크 버전보다 못함). <b>BI급 최종 에셋은 사람 도터/Aseprite 권장</b> — 상세·대안은 대표님 결정용으로 별도 보고. 아래는 실제 시도 결과(있는 그대로).</div>
-      <div class="rdgrid" id="rddotgrid" style="margin-top:10px"></div>
-    </div>
+    <div class="subhead" style="margin-top:2px">✅ <b>최종 확정 — 얼굴 마크</b> (사르르목장 BI 메인) · <span style="color:var(--brand)">몸통은 접고 얼굴 마크로 고정</span> · 모자 3종(우유팩·콘·스쿱)</div>
+    <div id="rdmain" class="rdgrid"></div>
+    <div class="subhead" style="margin-top:18px">🎬 얼굴 마크 애니메이션 — 눈깜박 + 모자 둥둥 (모자 3종)</div>
+    <div id="rdanim" class="rdgrid"></div>
+    <details style="margin-top:22px;border:1px solid var(--line);border-radius:12px;padding:10px 14px;background:rgba(120,140,180,.05)">
+      <summary style="cursor:pointer;font-weight:800;color:var(--brand)">🗂 몸통 시도 히스토리 (백업 · 삭제하지 않음 — 펼쳐보기)</summary>
+      <div class="subhead" style="margin-top:10px">진행하며 시도한 몸통 버전 기록 — <b>최종은 얼굴 마크로 확정</b>. 아래는 기록/백업용(참고).</div>
+      <div class="subhead" style="margin-top:12px">① 엎드린 로프 소 (크림 · SoS 톤) — 토핑3종</div>
+      <div id="rdhistloaf" class="rdgrid"></div>
+      <div class="subhead" style="margin-top:14px">② 정면 얼굴 + 몸통 결합 최종형(frontConcise) — 토핑3종</div>
+      <div id="rdbody" class="rdgrid"></div>
+      <div id="rdstudy" style="margin-top:18px;border:2px dashed #c9524e;border-radius:12px;padding:14px 16px;background:rgba(201,82,78,.06)">
+        <div style="font-weight:800;color:#c9524e;font-size:13px">⚠ 습작·비교용 — 브랜드 자산 아님 (저작권)</div>
+        <div class="subhead" style="margin-top:4px">레퍼런스(SoS · anubiarts)를 <b>픽셀 하나씩 손으로 찍어(타원 아님) 재현 + 색만 우리 팔레트</b>. 원작 형태를 따르므로 <b>브랜드 용도 사용 불가</b> — 비교·학습용.</div>
+        <div class="rdgrid" id="rdstudygrid" style="margin-top:10px"></div>
+      </div>
+      <div id="rddotbox" style="margin-top:16px;border:2px dashed #b08900;border-radius:12px;padding:14px 16px;background:rgba(176,137,0,.06)">
+        <div style="font-weight:800;color:#b08900;font-size:13px">🧪 손 도트맵 시도 — 타원 없이 레퍼런스 윤곽 픽셀 트레이스</div>
+        <div class="subhead" style="margin-top:4px"><b>방식은 작동</b>(타원 아닌 도트맵 배열), 다만 새 마스코트 손 도트는 아마추어 마감. BI 최종 에셋은 사람 도터/Aseprite 권장(정직 보고).</div>
+        <div class="rdgrid" id="rddotgrid" style="margin-top:10px"></div>
+      </div>
+    </details>
     <div class="subhead" style="margin-top:22px">🎨 기존 시안 세트 (A·B·C·D)</div>
     <div class="rdgrid" id="rdgrid"></div>
-    <div class="subhead" style="margin-top:20px">🎬 움직이는 미리보기 — 얼굴 마크 눈깜박 + 모자 둥둥 (모자 3종)</div>
-    <div id="rdanim" class="rdgrid"></div>
     <div class="subhead" style="margin-top:22px">🕓 디자인 히스토리 (반복 개선 과정 — ★ = 현재 채택 · 대표님과 비교용)</div>
     <div id="rdhistory"></div>
   </div>
@@ -673,7 +679,7 @@ function renderRedesign(){
   const R=buildLogos(); const P=R.P; const el=$('rdgrid'); if(!el) return; el.innerHTML='';
   // ✨ 소프트 셰이딩 리뉴얼 (신규 · 자체 팔레트)
   const HN={milk:'우유팩',cone:'콘',scoop:'스쿱'};
-  const rn=$('rdrenew'); if(rn && R.renew){ rn.innerHTML='';
+  const rn=$('rdmain'); if(rn && R.renew){ rn.innerHTML='';
     const mkCard=(sp,pal,name,note,fn,sc)=>{
       const card=document.createElement('div'); card.className='rdcard'; card.style.maxWidth='200px';
       const cv=document.createElement('canvas'); cv.className='rdimg'; drawSp(cv,sp,pal,sc||6); cv.style.maxWidth='160px'; card.appendChild(cv);
@@ -684,15 +690,15 @@ function renderRedesign(){
       const a2=document.createElement('a'); a2.textContent='고해상 ↓'; a2.onclick=()=>dlCanvas(sp,pal,12,fn+'-12x.png'); dl.appendChild(a2);
       card.appendChild(dl); return card;
     };
-    // 얼굴 마크 3종(모자별) — facePal
+    // ✅ 최종 확정: 얼굴 마크 3종(모자별) — facePal · 메인 고정
     const fp=R.renew.face.pal;
-    R.renew.face.variants.forEach(v=>rn.appendChild(mkCard(v.sp,fp,'얼굴 마크 · '+HN[v.key],'정면 얼굴 소프트 · 모자('+HN[v.key]+') · 파비콘/앱아이콘','saruru-logo-face-'+v.key,7)));
-    // 엎드린 로프 소 3종 — 크림
-    const rp=R.renew.pal;
-    R.renew.full.forEach(f=>rn.appendChild(mkCard(f.sp,rp,f.name,'엎드린 로프 마스코트 · 토핑('+HN[f.key]+') · 크림 소프트셰이딩·네이비 얼룩','saruru-logo-loaf-'+f.key,7)));
+    R.renew.face.variants.forEach(v=>rn.appendChild(mkCard(v.sp,fp,'✅ 얼굴 마크 · '+HN[v.key],'사르르목장 BI 최종 · 정면 얼굴 소프트 · 모자('+HN[v.key]+') · 파비콘/앱아이콘/굿즈','saruru-logo-face-'+v.key,7)));
+    // (히스토리 백업) 엎드린 로프 소 3종 — 크림
+    const rp=R.renew.pal; const hl=$('rdhistloaf');
+    if(hl){ hl.innerHTML=''; R.renew.full.forEach(f=>hl.appendChild(mkCard(f.sp,rp,f.name,'엎드린 로프 마스코트 · 토핑('+HN[f.key]+') · 크림 소프트셰이딩·네이비 얼룩','saruru-logo-loaf-'+f.key,7))); }
     // 정면 전신 소 3종 — facePal(흰 몸통, 얼굴 마크와 동일)
     const rb=$('rdbody'); if(rb && R.renew.face.bodies){ rb.innerHTML='';
-      R.renew.face.bodies.forEach(b=>rb.appendChild(mkCard(b.sp,fp,'BI 마스코트 · '+HN[b.key],'정면 얼굴 + 간결한 몸 + 오른쪽 엉덩이 아래로 내려옴(레퍼런스) · 다리 없음·볼륨 셰이딩 · 사르르목장 BI','saruru-BI-cow-'+b.key,6)));
+      R.renew.face.bodies.forEach(b=>rb.appendChild(mkCard(b.sp,fp,'(히스토리) 몸통 시도 · '+HN[b.key],'정면 얼굴+간결한 몸+엉덩이 내려옴(frontConcise) · 백업/기록용(최종 아님)','saruru-hist-body-'+b.key,6)));
     }
     // ⚠ 습작·비교용 (브랜드 사용 불가)
     const rs=$('rdstudygrid'); if(rs && R.renew.study){ rs.innerHTML='';
