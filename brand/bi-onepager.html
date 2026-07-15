@@ -1,0 +1,218 @@
+<!DOCTYPE html><html lang="ko"><head><meta charset="utf-8">
+<title>사르르목장 BI 원페이저</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/quiple/galmuri/dist/galmuri.css">
+<style>
+  @page{ size:A4; margin:0; }
+  *{ margin:0; padding:0; box-sizing:border-box; }
+  :root{
+    --navy:#385088; --ink:#26365e; --deep:#1c2748; --sky:#bcccea; --cream:#fff6e6;
+    --milk:#fffdf6; --pink:#f4a9b8; --pinkD:#e07d94; --pinkL:#ffd9e2; --yolk:#f3e6c6;
+  }
+  html,body{ background:#d7deea; }
+  .page{
+    width:794px; height:1123px; margin:0 auto; position:relative; overflow:hidden;
+    background:
+      radial-gradient(circle at 11px 11px, rgba(56,80,136,.06) 1.5px, transparent 1.6px) 0 0/22px 22px,
+      linear-gradient(160deg,#fffdf6 0%,#fff6e6 55%,#fdeede 100%);
+    color:var(--ink); font-family:'Galmuri11','Apple SD Gothic Neo',sans-serif;
+    -webkit-print-color-adjust:exact; print-color-adjust:exact; padding:30px 36px 22px;
+  }
+  canvas{ image-rendering:pixelated; }
+  .g7{ font-family:'Galmuri7',monospace; } .g11{ font-family:'Galmuri11',monospace; }
+
+  /* 헤더 */
+  .top{ display:flex; justify-content:space-between; align-items:flex-start; }
+  .brandline{ font-family:'Galmuri7',monospace; font-size:9px; letter-spacing:2px; color:var(--navy); }
+  .h1{ font-family:'Galmuri11',monospace; font-size:30px; color:var(--navy); line-height:1; margin-top:6px; }
+  .h1 b{ color:var(--pinkD); } .h1 span{ font-size:17px; color:var(--ink); }
+  .sub{ font-family:'Galmuri7',monospace; font-size:9px; color:var(--ink); margin-top:7px; letter-spacing:1px; }
+  .ribbon{ font-family:'Galmuri7',monospace; font-size:9px; color:#fff6e6; background:var(--navy);
+    padding:6px 11px; border:2px solid var(--ink); box-shadow:4px 4px 0 var(--pink); text-align:center; line-height:1.5; letter-spacing:1px; }
+  .ribbon .s{ color:var(--pinkL); }
+  .rule{ height:0; border-top:3px dashed var(--navy); opacity:.45; margin:13px 0; }
+
+  .lab{ font-family:'Galmuri7',monospace; font-size:9px; letter-spacing:2px; color:var(--pinkD); }
+  .lab .n{ color:var(--navy); }
+  .cardh{ font-family:'Galmuri11',monospace; font-size:12px; color:var(--navy); margin:4px 0 9px; }
+
+  .card{ background:var(--milk); border:3px solid var(--ink); box-shadow:5px 5px 0 var(--sky); padding:12px 14px; }
+  .card.pk{ box-shadow:5px 5px 0 var(--pink); }
+
+  /* 로고 락업 2종 */
+  .logos{ display:grid; grid-template-columns:1fr 1fr; gap:14px; }
+  .lock{ display:flex; align-items:center; gap:14px; padding:14px 16px; min-height:118px; }
+  .lockKo .txt .a{ font-family:'Galmuri11',monospace; font-size:27px; color:var(--navy); line-height:1; }
+  .lockKo .txt .a b{ color:var(--pinkD); }
+  .lockKo .txt .b{ font-family:'Galmuri7',monospace; font-size:10px; color:var(--ink); margin-top:9px; letter-spacing:1px; }
+  .lockEn .txt .a{ font-family:'Galmuri11',monospace; font-size:30px; color:var(--navy); line-height:.9; letter-spacing:1px; }
+  .lockEn .txt .b{ font-family:'Galmuri11',monospace; font-size:14px; color:var(--pinkD); line-height:1; margin-top:3px; letter-spacing:3px; }
+  .lockEn .txt .c{ font-family:'Galmuri7',monospace; font-size:8px; color:var(--ink); margin-top:8px; letter-spacing:2px; }
+  .miniTag{ font-family:'Galmuri7',monospace; font-size:8px; color:var(--pinkD); letter-spacing:2px; margin-bottom:6px; }
+
+  /* 마스코트 3종 */
+  .marks{ display:flex; gap:12px; justify-content:space-around; align-items:flex-end; }
+  .mark{ text-align:center; } .mark .cap{ font-family:'Galmuri7',monospace; font-size:9px; color:var(--ink); margin-top:5px; }
+  .anim{ font-family:'Galmuri7',monospace; font-size:9px; color:var(--pinkD); text-align:center; margin-top:8px; }
+
+  /* 하단 그리드 */
+  .grid{ display:grid; grid-template-columns:1.15fr 1fr; gap:14px; margin-top:14px; }
+  .sw{ display:grid; grid-template-columns:1fr 1fr 1fr; gap:7px; }
+  .chip{ border:2px solid var(--ink); } .chip .box{ height:32px; }
+  .chip .meta{ font-family:'Galmuri7',monospace; font-size:8px; padding:3px 4px; background:var(--milk); color:var(--ink); line-height:1.5; } .chip .meta b{ color:var(--navy); }
+  .typespec .big{ font-family:'Galmuri11',monospace; font-size:22px; color:var(--navy); }
+  .typespec .med{ font-family:'Galmuri11',monospace; font-size:12px; color:var(--ink); margin-top:5px; }
+  .typespec .cap{ font-family:'Galmuri7',monospace; font-size:9px; color:var(--pinkD); margin-top:6px; letter-spacing:1px; }
+  .tone{ display:flex; flex-wrap:wrap; gap:6px; }
+  .pill{ font-family:'Galmuri7',monospace; font-size:9px; color:#fff6e6; background:var(--navy); padding:5px 8px; border:2px solid var(--ink); }
+  .pill.p2{ background:var(--pinkD); } .pill.p3{ background:var(--sky); color:var(--ink); }
+  .dodont{ font-family:'Galmuri7',monospace; font-size:9px; color:var(--ink); margin-top:9px; line-height:1.8; }
+  .dodont .do{ color:#2f8f5b; } .dodont .no{ color:var(--pinkD); }
+  /* 자산 */
+  .assets{ display:flex; gap:12px; align-items:center; flex-wrap:wrap; }
+  .icobox{ border:3px solid var(--ink); border-radius:12px; padding:7px; background:var(--navy); box-shadow:3px 3px 0 var(--pink); }
+  .icobox.sm{ border-radius:8px; padding:4px; }
+  .assetcap{ font-family:'Galmuri7',monospace; font-size:8px; color:var(--ink); text-align:center; margin-top:4px; }
+  .patt{ width:56px; height:56px; border:2px solid var(--ink);
+    background:
+      radial-gradient(circle at 8px 8px, var(--pink) 3px, transparent 4px) 0 0/16px 16px,
+      radial-gradient(circle at 16px 16px, var(--sky) 2px, transparent 3px) 0 0/16px 16px,
+      var(--cream); }
+
+  .foot{ position:absolute; left:36px; right:36px; bottom:20px; display:flex; justify-content:space-between; align-items:center; border-top:3px solid var(--navy); padding-top:9px; }
+  .foot .l{ font-family:'Galmuri11',monospace; font-size:12px; color:var(--navy); } .foot .l b{ color:var(--pinkD); }
+  .foot .r{ font-family:'Galmuri7',monospace; font-size:8px; color:var(--ink); text-align:right; letter-spacing:1px; line-height:1.6; }
+  .stars{ letter-spacing:3px; color:var(--pink); font-size:10px; }
+</style></head>
+<body>
+<div class="page">
+  <div class="top">
+    <div>
+      <div class="brandline">✦ BRAND IDENTITY · DIGITAL ONE-PAGER · 2026 ✦</div>
+      <div class="h1">사르르<b>목장</b> <span>SARURU</span></div>
+      <div class="sub">RETRO PIXEL · HIP · CUTE — 뉴진스풍 픽셀 브랜드 아이덴티티</div>
+    </div>
+    <div class="ribbon"><span class="s">★</span> NEWJEANS-STYLE<br>PIXEL BI <span class="s">★</span></div>
+  </div>
+  <div class="rule"></div>
+
+  <!-- 로고 락업 2종 -->
+  <div class="logos">
+    <div class="card lockKo lock">
+      <canvas id="logoKo"></canvas>
+      <div class="txt"><div class="miniTag">한글 로고 · KR</div><div class="a">사르르<b>목장</b></div><div class="b">프레시 밀크 · 아이스크림</div></div>
+    </div>
+    <div class="card pk lockEn lock">
+      <canvas id="logoEn"></canvas>
+      <div class="txt"><div class="miniTag">영문 로고 · EN</div><div class="a">SARURU</div><div class="b">MOKJANG</div><div class="c">FRESH MILK · ICE CREAM</div></div>
+    </div>
+  </div>
+
+  <!-- 마스코트 3종 -->
+  <div class="card" style="margin-top:14px">
+    <div class="lab">01 · <span class="n">MASCOT — 얼굴 마크 (확정 로고)</span></div>
+    <div class="cardh">얼굴 마크 젖소 · 모자 3종</div>
+    <div class="marks">
+      <div class="mark"><canvas class="m" data-k="milk"></canvas><div class="cap">우유팩</div></div>
+      <div class="mark"><canvas class="m" data-k="cone"></canvas><div class="cap">소프트콘</div></div>
+      <div class="mark"><canvas class="m" data-k="scoop"></canvas><div class="cap">스쿱</div></div>
+    </div>
+    <div class="anim">🎬 애니메이션 컨셉 — 눈 깜빡(blink) + 모자 둥둥(float, 1회 왕복)</div>
+  </div>
+
+  <div class="grid">
+    <!-- 컬러 -->
+    <div class="card">
+      <div class="lab">02 · <span class="n">COLOR / 팔레트</span></div>
+      <div class="cardh">브랜드 컬러</div>
+      <div class="sw">
+        <div class="chip"><div class="box" style="background:#385088"></div><div class="meta"><b>NAVY</b><br>#385088</div></div>
+        <div class="chip"><div class="box" style="background:#26365e"></div><div class="meta"><b>DEEP INK</b><br>#26365e</div></div>
+        <div class="chip"><div class="box" style="background:#bcccea"></div><div class="meta"><b>SKY</b><br>#bcccea</div></div>
+        <div class="chip"><div class="box" style="background:#fff6e6"></div><div class="meta"><b>CREAM</b><br>#fff6e6</div></div>
+        <div class="chip"><div class="box" style="background:#f4a9b8"></div><div class="meta"><b>STRAWBERRY</b><br>#f4a9b8</div></div>
+        <div class="chip"><div class="box" style="background:#e07d94"></div><div class="meta"><b>BERRY</b><br>#e07d94</div></div>
+      </div>
+    </div>
+    <!-- 타이포 -->
+    <div class="card pk">
+      <div class="lab">03 · <span class="n">TYPE / 타이포</span></div>
+      <div class="cardh">타이포그래피</div>
+      <div class="typespec">
+        <div class="big">사르르목장</div>
+        <div class="med">FRESH MILK · ICE CREAM</div>
+        <div class="cap">Galmuri11 (제목) · Galmuri7 (캡션) — 픽셀 한글</div>
+      </div>
+    </div>
+    <!-- 톤 -->
+    <div class="card pk">
+      <div class="lab">04 · <span class="n">TONE / 톤앤매너</span></div>
+      <div class="cardh">톤 & 무드</div>
+      <div class="tone">
+        <span class="pill">RETRO</span><span class="pill p2">CUTE</span><span class="pill p3">HIP</span>
+        <span class="pill p2">FRESH</span><span class="pill">목장 감성</span><span class="pill p3">DREAMY</span>
+      </div>
+      <div class="dodont">
+        <span class="do">▸ DO</span> — 픽셀 그리드 · 소프트 파스텔 · 둥근 얼굴 · 여백<br>
+        <span class="no">▸ DON'T</span> — 복잡한 디테일 · 사실적 명암 · 칙칙함
+      </div>
+    </div>
+    <!-- 자산 -->
+    <div class="card">
+      <div class="lab">05 · <span class="n">ASSETS / 활용</span></div>
+      <div class="cardh">앱아이콘 · 패턴</div>
+      <div class="assets">
+        <div><div class="icobox"><canvas id="ico"></canvas></div><div class="assetcap">앱 아이콘</div></div>
+        <div><div class="icobox sm"><canvas id="fav"></canvas></div><div class="assetcap">파비콘</div></div>
+        <div><div class="patt"></div><div class="assetcap">브랜드 패턴</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="foot">
+    <div class="l">🥛 사르르<b>목장</b> · Fresh Milk Ice Cream</div>
+    <div class="r"><span class="stars">✦ ★ ✦</span><br>saruru-game · BRAND IDENTITY v1</div>
+  </div>
+</div>
+
+<script>
+function blank(w,h){return Array.from({length:h},()=>Array(w).fill('.'));}
+function put(g,r,c,str){for(let i=0;i<str.length;i++){const cc=c+i;if(g[r]&&cc>=0&&cc<g[r].length&&str[i]!=='~')g[r][cc]=str[i];}}
+function disc(g,cx,cy,rx,ry,ch){for(let r=0;r<g.length;r++)for(let c=0;c<g[0].length;c++){const dx=(c-cx)/rx,dy=(r-cy)/ry;if(dx*dx+dy*dy<=1)g[r][c]=ch;}}
+function discShade(g,cx,cy,rx,ry,ramp,over,lx,ly){const LX=(lx===undefined?0.4:lx),LY=(ly===undefined?0.72:ly);for(let r=0;r<g.length;r++)for(let c=0;c<g[0].length;c++){const dx=(c-cx)/rx,dy=(r-cy)/ry,d2=dx*dx+dy*dy;if(d2<=1){if(over&&g[r][c]!=='.'&&g[r][c]!==over)continue;const light=-(dx*LX+dy*LY);let v=light*0.5+0.5;if(d2>0.7)v-=0.3;if(d2>0.9)v-=0.16;let idx=Math.floor((1-v)*ramp.length);idx=Math.max(0,Math.min(ramp.length-1,idx));g[r][c]=ramp[idx];}}}
+function outlineDir(g,fills,cx,cy,tri){const H=g.length,W=g[0].length,src=g.map(r=>r.slice()),F=new Set(fills);for(let r=0;r<H;r++)for(let c=0;c<W;c++){if(src[r][c]==='.'){let adj=false;for(const dd of [[1,0],[-1,0],[0,1],[0,-1],[1,1],[1,-1],[-1,1],[-1,-1]])if(src[r+dd[0]]&&F.has(src[r+dd[0]][c+dd[1]]))adj=true;if(adj){const dirv=(c-cx)+(r-cy);g[r][c]=tri?(dirv>6?'X':dirv>-4?'D':'L'):(dirv>7?'X':'D');}}}}
+function despeckle(g){const H=g.length,W=g[0].length,src=g.map(r=>r.slice());for(let r=0;r<H;r++)for(let c=0;c<W;c++){if(src[r][c]!=='.'){let n=0;for(const d of[[1,0],[-1,0],[0,1],[0,-1]])if(src[r+d[0]]&&src[r+d[0]][c+d[1]]&&src[r+d[0]][c+d[1]]!=='.')n++;if(n===0)g[r][c]='.';}}}
+const facePal={'.':null,X:'#1c2748',D:'#26365e',d:'#385088',L:'#5a72aa',W:'#ffffff',e:'#eff4fc',s:'#d6e0f1',S:'#bcccea',N:'#3f5896',n:'#2a3d6e',c:'#fff6e6',y:'#f3e6c6',Y:'#e2cfa4',p:'#ffd9e2',P:'#f4a9b8',Q:'#e07d94',K:'#26365e',H:'#ffffff',t:'#f4d9a2',u:'#dcb873'};
+function topping(g,kind,cx){
+  if(kind==='milk'){put(g,0,cx-2,'cccc');put(g,1,cx-3,'cccccc');
+    for(let r=2;r<10;r++)for(let c=cx-4;c<cx+4;c++)g[r][c]='c';
+    for(let r=2;r<10;r++){g[r][cx-4]='W';g[r][cx+3]='Y';}
+    for(let c=cx-2;c<cx+2;c++){g[4][c]='L';g[5][c]='L';}
+  } else if(kind==='cone'){discShade(g,cx,3,3.4,3,['W','W','e','s']);put(g,0,cx-1,'WW');
+    for(let r=7;r<11;r++){const w=Math.max(1,10-r);for(let c=cx-w;c<=cx+w;c++)g[r][c]=((c-cx+r)%3===0)?'u':'t';}
+  } else {discShade(g,cx,3,3.8,3.4,['W','c','c','y','Y']);put(g,1,cx-2,'WW');}
+}
+function faceHeadG(){const g=blank(40,42);
+  discShade(g,7,16,3.4,4,['W','e','s','S'],null,0.62,0.62);discShade(g,33,17,2.8,3.4,['W','e','s','S'],null,0.62,0.62);
+  discShade(g,20,23,13,12,['W','W','e','e','s','s','S'],null,0.62,0.62);
+  discShade(g,26,17,3.3,2.7,['N','N','n'],null,0.62,0.62);discShade(g,10,27,2.5,1.9,['N','N','n'],null,0.62,0.62);
+  discShade(g,20,30,5.5,3.4,['p','P','P','Q'],null,0.62,0.62);
+  return g;}
+function faceDetails(g){
+  disc(g,15,23,1.8,2.4,'K');disc(g,25,23,1.7,2.2,'K');
+  put(g,21,14,'H');put(g,21,24,'H');put(g,24,15,'L');put(g,24,25,'L');
+  put(g,29,18,'Q');put(g,29,22,'Q');
+  put(g,32,17,'Q');put(g,33,18,'Q');put(g,33,19,'Q');put(g,33,20,'Q');put(g,33,21,'Q');put(g,32,22,'Q');
+  disc(g,10,30,1.9,1.4,'P');disc(g,30,30,1.9,1.4,'P');}
+function faceMark(kind){const g=faceHeadG(); if(kind&&kind!=='none')topping(g,kind,20);
+  outlineDir(g,['W','e','s','S','c','y','Y','L','N','n','p','P','Q','t','u'],20,23,true);
+  faceDetails(g); despeckle(g); return g.map(r=>r.join(''));}
+function draw(cv,sp,sc){const W=Math.max(...sp.map(r=>r.length)),H=sp.length;cv.width=W*sc;cv.height=H*sc;const x=cv.getContext('2d');x.imageSmoothingEnabled=false;for(let r=0;r<H;r++)for(let c=0;c<sp[r].length;c++){const col=facePal[sp[r][c]];if(col){x.fillStyle=col;x.fillRect(c*sc,r*sc,sc,sc);}}}
+const milkSp=faceMark('milk');
+draw(document.getElementById('logoKo'), milkSp, 3);
+draw(document.getElementById('logoEn'), milkSp, 3);
+draw(document.getElementById('ico'), faceMark('none'), 2);
+draw(document.getElementById('fav'), faceMark('none'), 1);
+document.querySelectorAll('canvas.m').forEach(cv=>draw(cv, faceMark(cv.dataset.k), 5));
+window.__ready=true;
+</script>
+</body></html>

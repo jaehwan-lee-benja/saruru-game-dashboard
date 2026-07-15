@@ -662,7 +662,8 @@ function animFace(cv,pal,headSp,hatSp){
   let t0=null;
   function frame(now){
     if(t0==null)t0=now; const t=(now-t0)/1000;
-    const bob=Math.round(Math.sin(t*2.0)*2)-1;   // 모자 둥둥(머리 위로 떠서 위아래)
+    const ph=t%3.0; // 3초 주기: 앞 1.2초에 위아래 1회 왕복, 이후 정지(둥둥 1회)
+    const bob=(ph<1.2? -Math.round(Math.sin(ph/1.2*Math.PI)*2) : 0) - 1;
     const blink=(t%3.0)<0.13;
     x.clearRect(0,0,cv.width,cv.height);
     for(let r=0;r<H;r++)for(let c=0;c<headSp[r].length;c++){const col=pal[headSp[r][c]];if(col){x.fillStyle=col;x.fillRect(c*sc,(r+EX)*sc,sc,sc);}}
