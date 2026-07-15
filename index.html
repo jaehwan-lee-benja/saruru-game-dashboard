@@ -245,7 +245,7 @@ function renderApp(){
     <p class="cap">기계적 축소가 아니라 <b>브랜드에 맞게 예쁜 픽셀아트로 재해석</b> — 젖소 · 네이비 <code style="font-family:var(--mono)">#385088</code> · 우유 모티프로 <b>사르르목장 정체성</b> 유지. 인기 픽셀 마스코트 로고 학습 반영(치비 비율·큰 눈+글린트·볼터치·3톤 네이비). <b>여러 시안 → 피드백 받아 다듬는 전제(v1)</b>. 각 카드 다운로드 가능.</p>
     <div class="subhead" style="margin-top:2px">✨ 소프트 셰이딩 리뉴얼 <span style="color:var(--brand)">신규</span> — 유저 참고이미지(SoS anubiarts) 포즈·톤 정확 반영 · 엎드린 로프 소 + 토핑3종 · 우리 네이비 정체성 유지</div>
     <div id="rdrenew" class="rdgrid"></div>
-    <div class="subhead" style="margin-top:20px">🐮 정면 전신 소 <span style="color:var(--brand)">신규</span> — 귀여운 정면 얼굴 그대로 + 레퍼런스 몸(앉은 플러시·다리 접힘·발굽 빼꼼) · 토핑3종</div>
+    <div class="subhead" style="margin-top:20px">🐮 정면얼굴 + 옆모습 로프 몸 <span style="color:var(--brand)">신규</span> — 귀여운 정면 얼굴 그대로 + 레퍼런스와 거의 동일한 옆으로 엎드린 몸(엉덩이 네이비·발끝 분홍 빼꼼) · 토핑3종</div>
     <div id="rdbody" class="rdgrid"></div>
     <div class="subhead" style="margin-top:22px">🎨 기존 시안 세트 (A·B·C·D)</div>
     <div class="rdgrid" id="rdgrid"></div>
@@ -468,19 +468,19 @@ function buildLogos(){
     put(g,29+oy,18+ox,'Q');put(g,29+oy,22+ox,'Q');
     put(g,32+oy,17+ox,'Q');put(g,33+oy,18+ox,'Q');put(g,33+oy,19+ox,'Q');put(g,33+oy,20+ox,'Q');put(g,33+oy,21+ox,'Q');put(g,32+oy,22+ox,'Q');
     disc(g,10+ox,30+oy,1.9,1.4,'P');disc(g,30+ox,30+oy,1.9,1.4,'P');}
-  function frontFullCow(kind){const g=blank(44,62); const ox=2,oy=-3;
-    discShade(g,22,45,15,14,_CREAM,null,0.5,0.62);
-    discShade(g,15,57,4.2,3.2,_CREAM,null,0.5,0.62);discShade(g,29,57,4.2,3.2,_CREAM,null,0.5,0.62);
-    put(g,59,13,'S');put(g,59,14,'S');put(g,59,15,'S');put(g,59,16,'S');
-    put(g,59,27,'S');put(g,59,28,'S');put(g,59,29,'S');put(g,59,30,'S');
-    discShade(g,13,43,4,5,_NAVY,null,0.5,0.62);discShade(g,32,49,5,4.2,_NAVY,null,0.5,0.62);
+  // 정면 얼굴 + 옆으로 엎드린 로프 몸(레퍼런스 포즈) — 몸 오른쪽·엉덩이 네이비·발끝 분홍 빼꼼
+  function loafFrontFace(kind){const g=blank(78,46); const ox=2,oy=-1;
+    discShade(g,45,27,28,15,_CREAM,null,0.4,0.68);
+    discShade(g,61,22,8.5,10,_NAVY,null,0.4,0.68);
+    discShade(g,30,40,4,3,_CREAM,null,0.4,0.68);discShade(g,44,40,4,3,_CREAM,null,0.4,0.68);discShade(g,57,40,4,3,_CREAM,null,0.4,0.68);
+    put(g,42,29,'p');put(g,42,30,'p');put(g,42,44,'p');put(g,42,45,'p');
     drawHead(g,ox,oy);
     if(kind&&kind!=='none')topping(g,kind,20+ox);
-    outlineDir(g,['W','e','s','S','c','y','Y','L','N','n','p','P','Q','t','u'],22,32,true);
+    outlineDir(g,['W','e','s','S','c','y','Y','L','N','n','p','P','Q','t','u'],28,24,true);
     drawFaceDet(g,ox,oy);
     despeckle(g);return g;}
   return {P, hero:S(heroCow()), renew:{pal:renewPal,
-    face:{pal:facePal, variants:[{key:'milk',sp:S(faceMark('milk'))},{key:'cone',sp:S(faceMark('cone'))},{key:'scoop',sp:S(faceMark('scoop'))}], headSp:S(faceMark('none')), hats:{milk:S(hatSprite('milk')),cone:S(hatSprite('cone')),scoop:S(hatSprite('scoop'))}, bodies:[{key:'milk',sp:S(frontFullCow('milk'))},{key:'cone',sp:S(frontFullCow('cone'))},{key:'scoop',sp:S(frontFullCow('scoop'))}]},
+    face:{pal:facePal, variants:[{key:'milk',sp:S(faceMark('milk'))},{key:'cone',sp:S(faceMark('cone'))},{key:'scoop',sp:S(faceMark('scoop'))}], headSp:S(faceMark('none')), hats:{milk:S(hatSprite('milk')),cone:S(hatSprite('cone')),scoop:S(hatSprite('scoop'))}, bodies:[{key:'milk',sp:S(loafFrontFace('milk'))},{key:'cone',sp:S(loafFrontFace('cone'))},{key:'scoop',sp:S(loafFrontFace('scoop'))}]},
     full:[{key:'milk',name:'로프 소 · 우유팩',sp:S(renewCow('milk'))},{key:'cone',name:'로프 소 · 소프트콘',sp:S(renewCow('cone'))},{key:'scoop',name:'로프 소 · 스쿱',sp:S(renewCow('scoop'))}]}, main:[
     {key:'hero', name:'A. 히어로 소', note:'단일 히어로 마스코트 · 파비콘/앱아이콘·게임 마크', sp:S(heroCow())},
     {key:'trio', name:'B. 트리오', note:'원본 3마리 재해석(콘·우유팩·아이스크림 모자) · 이전(둥근 귀) 채택', sp:S(trioFrom(smallOld))},
@@ -599,7 +599,7 @@ function renderRedesign(){
     R.renew.full.forEach(f=>rn.appendChild(mkCard(f.sp,rp,f.name,'엎드린 로프 마스코트 · 토핑('+HN[f.key]+') · 크림 소프트셰이딩·네이비 얼룩','saruru-logo-loaf-'+f.key,7)));
     // 정면 전신 소 3종 — facePal(흰 몸통, 얼굴 마크와 동일)
     const rb=$('rdbody'); if(rb && R.renew.face.bodies){ rb.innerHTML='';
-      R.renew.face.bodies.forEach(b=>rb.appendChild(mkCard(b.sp,fp,'정면 전신 소 · '+HN[b.key],'귀여운 정면 얼굴 + 앉은 플러시 몸 · 다리 접힘·발굽 빼꼼 · 굿즈/캐릭터','saruru-cow-front-'+b.key,5)));
+      R.renew.face.bodies.forEach(b=>rb.appendChild(mkCard(b.sp,fp,'정면얼굴+로프몸 · '+HN[b.key],'귀여운 정면 얼굴 + 옆으로 엎드린 로프 몸(레퍼런스 포즈) · 엉덩이 네이비·발끝 분홍 · 굿즈/캐릭터','saruru-cow-loaf-'+b.key,5)));
     }
   }
   // 순서: A(히어로) → B(트리오) → C(배지) → D(워드마크)
