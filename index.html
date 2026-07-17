@@ -233,7 +233,7 @@ function renderApp(){
 
   <h2><span class="dot"></span>게임 버전 이력 <span class="tag live">플레이 가능</span></h2>
   <div class="card">
-    <p class="cap">똥피하기가 발전해 온 버전들 — 각 <b>▶ 플레이</b>를 누르면 그 시점 버전을 그대로 플레이할 수 있어요.</p>
+    <p class="cap">똥피하기가 발전해 온 버전들 — 각 <b>▶ 플레이</b>를 누르면 그 시점 버전을 그대로 플레이할 수 있어요. <b style="color:var(--brand)">v7에서 확정 BI를 게임 본체에 적용</b> — 플레이어가 얼굴 마크 마스코트 그 자체이고, 모자 3종을 캐릭터로 고를 수 있어요.</p>
     <div class="vergrid" id="vergrid"></div>
   </div>
 
@@ -244,6 +244,7 @@ function renderApp(){
   <div class="card">
     <p class="cap">기계적 축소가 아니라 <b>브랜드에 맞게 예쁜 픽셀아트로 재해석</b> — 젖소 · 네이비 <code style="font-family:var(--mono)">#385088</code> · 우유 모티프로 <b>사르르목장 정체성</b> 유지. 인기 픽셀 마스코트 로고 학습 반영(치비 비율·큰 눈+글린트·볼터치·3톤 네이비). <b>여러 시안 → 피드백 받아 다듬는 전제(v1)</b>. 각 카드 다운로드 가능.</p>
     <div class="subhead" style="margin-top:2px">✅ <b>최종 확정 — 얼굴 마크</b> (사르르목장 BI 메인) · <span style="color:var(--brand)">몸통은 접고 얼굴 마크로 고정</span> · 모자 3종(우유팩·콘·스쿱)</div>
+    <div class="cap" style="margin:6px 0 0">🎮 이 확정본이 <b>게임(v7)에 그대로 적용</b>됐습니다 — 생성기 코드를 이식해 좌표·팔레트·애니(눈깜박·모자 둥둥)까지 동일. <a href="https://jaehwan-lee-benja.github.io/saruru-game/" target="_blank" rel="noopener" style="color:var(--lake)">움직이는 마스코트 플레이 ↗</a></div>
     <div id="rdmain" class="rdgrid"></div>
     <div class="subhead" style="margin-top:18px">🎬 얼굴 마크 애니메이션 — 눈깜박 + 모자 둥둥 (모자 3종)</div>
     <div id="rdanim" class="rdgrid"></div>
@@ -342,7 +343,8 @@ function renderApp(){
     {v:'v3', name:'레트로 픽셀', desc:'레트로 픽셀아트 아트디렉션으로 전환', path:'v3-pixel'},
     {v:'v4', name:'완성도 업', desc:'소 더 귀엽게·아이템 리파인·화살표 제거(정면 소)', path:'v4-cute'},
     {v:'v5', name:'소 옆모습', desc:'측면뷰 송아지 + 이동방향 flip·걷기 애니메이션', path:'v5-sideview'},
-    {v:'v6', name:'폴리싱 (현재)', desc:'치비 소·아이템 고급화·반짝임·8bit 사운드·햅틱', path:'v6-polish', current:true},
+    {v:'v6', name:'폴리싱', desc:'치비 소·아이템 고급화·반짝임·8bit 사운드·햅틱', path:'v6-polish'},
+    {v:'v7', name:'BI 적용 (현재)', desc:'★확정 BI 리뉴얼 — 플레이어가 얼굴 마크 마스코트 그 자체. 모자 3종 캐릭터 선택 + BI 팔레트/그래픽 문법 전면 적용', path:'v7-bi', current:true},
   ];
   const vg=$('vergrid');
   VERSIONS.forEach(v=>{
