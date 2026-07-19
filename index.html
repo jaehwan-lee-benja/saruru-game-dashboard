@@ -200,15 +200,22 @@ function drawCow(canvas,sp){
 
 function renderApp(){
   $('app').innerHTML=`
-  <h2><span class="dot"></span>게임 현황 · 통계 <span class="tag">목업 · M2 카카오 연동 예정</span></h2>
-  <div class="kpis mock">
-    <div class="tile lake"><div class="label">누적 플레이</div><div class="num">—<small> 회</small></div><div class="sub">카카오 로그인 후 집계</div></div>
-    <div class="tile gold"><div class="label">등록 플레이어</div><div class="num">—<small> 명</small></div><div class="sub">닉네임 기준</div></div>
-    <div class="tile"><div class="label">최고 점수</div><div class="num">—</div><div class="sub">전체 랭킹 1위</div></div>
-    <div class="tile plum"><div class="label">오늘 플레이</div><div class="num">—<small> 회</small></div><div class="sub">DAU / 세션</div></div>
-    <div class="tile crit"><div class="label">치트 의심 제출</div><div class="num">—</div><div class="sub">Edge Function 검증</div></div>
+  <h2><span class="dot"></span>게임 현황 · 통계 <span class="tag live">랭킹 라이브 · 집계 승인대기</span></h2>
+  <div class="kpis">
+    <div class="tile lake"><div class="label">누적 플레이</div><div class="num" id="kpi-plays">—<small> 회</small></div><div class="sub">집계 함수 승인 후</div></div>
+    <div class="tile gold"><div class="label">등록 플레이어</div><div class="num" id="kpi-players">—<small> 명</small></div><div class="sub">닉네임 기준</div></div>
+    <div class="tile"><div class="label">최고 점수</div><div class="num" id="kpi-top">…</div><div class="sub">전체 랭킹 1위 (라이브)</div></div>
+    <div class="tile plum"><div class="label">오늘 플레이</div><div class="num" id="kpi-today">—<small> 회</small></div><div class="sub">집계 함수 승인 후</div></div>
+    <div class="tile crit"><div class="label">치트 의심 제출</div><div class="num" id="kpi-cheat">—</div><div class="sub">Edge Function 검증</div></div>
   </div>
-  <div class="card" style="margin-top:14px"><div class="notice">📊 <b>실데이터 연동 대기</b> — M2(카카오 로그인 + game 스키마 랭킹)가 배포되면 이 영역이 라이브 통계로 채워집니다. game 스키마 신설은 공유 DB라 <b>guardian 검수 + 유저 승인</b> 게이트 후 진행됩니다.</div></div>
+
+  <div class="card" style="margin-top:14px">
+    <h3>실시간 랭킹 · 똥피하기 <span style="font-size:10px;font-weight:700;letter-spacing:.06em;padding:2px 8px;border-radius:20px;background:var(--brand-soft);color:var(--brand);margin-left:6px">TOP 10 · 라이브</span></h3>
+    <p class="cap"><code style="font-family:var(--mono)">game.top_scores()</code> 실데이터 — 닉네임 + 최고점만(PII 없음).</p>
+    <div class="plan" id="lb"><div class="plan-row"><span>—</span><span>랭킹 불러오는 중…</span><span class="st mock">…</span></div></div>
+  </div>
+
+  <div class="card" style="margin-top:14px"><div class="notice">📊 <b>랭킹·최고점 = 라이브 연동 완료.</b> 누적 플레이 / 등록 플레이어 / 오늘 플레이 집계는 RLS상 anon/authenticated의 전체 count가 막혀 있어 <b>집계용 함수 <code style="font-family:var(--mono)">game.public_stats()</code></b> 신설이 필요합니다(공유 DB DDL → <b>guardian 검수 + 유저 승인</b> 게이트). 승인·배포되면 위 KPI 3칸이 자동으로 채워집니다.</div></div>
 
   <h2><span class="dot"></span>멤버십 · 사르르목장 연결 <span class="tag">구조 · 틀</span></h2>
   <div class="card">
@@ -357,6 +364,40 @@ function renderApp(){
     vg.appendChild(c);
   });
   renderRedesign();
+  loadStats();
+}
+
+// ===== 라이브 통계 =====
+function esc(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
+async function loadStats(){
+  // 1) 랭킹·최고점 — game.top_scores() (anon 실행 가능, 승인 불필요)
+  try{
+    const {data,error}=await sb.rpc('top_scores',{p_game:'ddong',p_limit:10,p_period:'all'});
+    if(error) throw error;
+    const rows=data||[];
+    const topEl=$('kpi-top'); if(topEl) topEl.textContent = rows.length ? Number(rows[0].best).toLocaleString() : '0';
+    const lb=$('lb');
+    if(lb){
+      lb.innerHTML = rows.length
+        ? rows.map((r,i)=>`<div class="plan-row"><span>${i+1}</span><span>${esc(r.nickname)}</span><span class="st done">${Number(r.best).toLocaleString()}점</span></div>`).join('')
+        : '<div class="plan-row"><span>—</span><span>아직 랭킹 기록이 없습니다</span><span class="st mock">0</span></div>';
+    }
+  }catch(e){
+    const lb=$('lb'); if(lb) lb.innerHTML='<div class="plan-row"><span>!</span><span>랭킹 로드 실패: '+esc(e.message||String(e))+'</span><span class="st gate">오류</span></div>';
+    const topEl=$('kpi-top'); if(topEl) topEl.textContent='—';
+  }
+  // 2) 집계 KPI — game.public_stats() (승인·배포되면 활성. 미배포면 조용히 스킵)
+  try{
+    const {data,error}=await sb.rpc('public_stats',{p_game:'ddong'});
+    if(error) throw error;
+    const s=Array.isArray(data)?data[0]:data;
+    if(s){
+      if($('kpi-plays')   && s.plays_total!=null)   $('kpi-plays').innerHTML   = Number(s.plays_total).toLocaleString()+'<small> 회</small>';
+      if($('kpi-players') && s.players_total!=null) $('kpi-players').innerHTML = Number(s.players_total).toLocaleString()+'<small> 명</small>';
+      if($('kpi-today')   && s.plays_today!=null)   $('kpi-today').innerHTML   = Number(s.plays_today).toLocaleString()+'<small> 회</small>';
+      if($('kpi-cheat')   && s.cheat_flagged!=null) $('kpi-cheat').textContent = Number(s.cheat_flagged).toLocaleString();
+    }
+  }catch(_){ /* public_stats() 아직 미배포 — KPI는 '—' 유지 */ }
 }
 
 // ===== 로고 리디자인 시안 (자기완결 픽셀 생성) =====
