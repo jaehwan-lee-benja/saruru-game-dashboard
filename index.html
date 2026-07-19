@@ -372,7 +372,7 @@ function esc(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;',
 async function loadStats(){
   // 1) 랭킹·최고점 — game.top_scores() (anon 실행 가능, 승인 불필요)
   try{
-    const {data,error}=await sb.rpc('top_scores',{p_game:'ddong',p_limit:10,p_period:'all'});
+    const {data,error}=await sb.schema('game').rpc('top_scores',{p_game:'ddong',p_limit:10,p_period:'all'});
     if(error) throw error;
     const rows=data||[];
     const topEl=$('kpi-top'); if(topEl) topEl.textContent = rows.length ? Number(rows[0].best).toLocaleString() : '0';
@@ -388,7 +388,7 @@ async function loadStats(){
   }
   // 2) 집계 KPI — game.public_stats() (승인·배포되면 활성. 미배포면 조용히 스킵)
   try{
-    const {data,error}=await sb.rpc('public_stats',{p_game:'ddong'});
+    const {data,error}=await sb.schema('game').rpc('public_stats',{p_game:'ddong'});
     if(error) throw error;
     const s=Array.isArray(data)?data[0]:data;
     if(s){
